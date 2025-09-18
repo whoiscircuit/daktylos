@@ -147,10 +147,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 const key_override_t override_swap_qoute_and_double_qoute = ko_make_basic(MOD_MASK_SHIFT, KC_DQUO, KC_QUOT);
+const key_override_t override_shift_slash_is_back_slash = ko_make_basic(MOD_MASK_SHIFT, KC_SLSH, KC_BSLS);
 
 // This globally defines all key overrides to be used
 const key_override_t *key_overrides[] = {
-	&override_swap_qoute_and_double_qoute
+	&override_swap_qoute_and_double_qoute,
+    &override_shift_slash_is_back_slash
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
