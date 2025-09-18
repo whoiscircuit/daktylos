@@ -19,6 +19,16 @@ enum layer_names {
 #define LT_MOS_TAB LT(MOS,KC_TAB)
 #define LT_MED_ESC LT(MED,KC_ESC)
 
+#define MT_LGUI_A MT(MOD_LGUI,KC_A)
+#define MT_LALT_R MT(MOD_LALT,KC_R)
+#define MT_LCTL_S MT(MOD_LCTL,KC_S)
+#define MT_LSFT_T MT(MOD_LSFT,KC_T)
+
+#define MT_RSFT_N MT(MOD_RSFT,KC_N)
+#define MT_RCTL_E MT(MOD_RCTL,KC_E)
+#define MT_RALT_I MT(MOD_RALT,KC_I)
+#define MT_RGUI_O MT(MOD_RGUI,KC_O)
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,--------------+--------------+--------------+--------------+--------------+--------------.                                ,--------------+--------------+--------------+--------------+--------------+--------------.
   //    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
@@ -44,7 +54,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,--------------+--------------+--------------+--------------+--------------+--------------.                                ,--------------+--------------+--------------+--------------+--------------+--------------.
          KC_GRV    ,     KC_Q     ,     KC_W     ,     KC_F     ,     KC_P     ,     KC_B     ,                                      KC_J     ,     KC_L     ,     KC_U     ,     KC_Y     ,   KC_DQUO    ,   KC_UNDS    ,
   //|--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------|
-        KC_SLSH    ,     KC_A     ,     KC_R     ,     KC_S     ,     KC_T     ,     KC_G     ,                                      KC_M     ,     KC_N     ,     KC_E     ,     KC_I     ,     KC_O     ,   KC_EQUAL   ,
+        KC_SLSH    ,   MT_LGUI_A  ,   MT_LALT_R  ,   MT_LCTL_S  ,   MT_LSFT_T  ,     KC_G     ,                                      KC_M     ,   MT_RSFT_N  ,   MT_RCTL_E  ,   MT_RALT_I  ,   MT_RGUI_O  ,   KC_EQUAL   ,
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                          KC_Z     ,     KC_X     ,     KC_C     ,     KC_D     ,     KC_V     ,                                      KC_K     ,     KC_H     ,    KC_COMM   ,    KC_DOT    ,   KC_SCLN    ,
   //               `--------------+--------------+--------------+--------------+--------------+--------------,  ,--------------+--------------+--------------+--------------+--------------+--------------`
