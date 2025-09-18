@@ -12,6 +12,9 @@ enum layer_names {
     NUMBER_OF_LAYERS
 };
 
+// enum custom_keycodes {
+//     LT_NUM_ENT = SAFE_RANGE
+// };
 #define LT_NUM_ENT LT(NUM,KC_ENT)
 #define LT_SYM_BSPC LT(SYM,KC_BSPC)
 #define LT_FUN_DEL  LT(FUN,KC_DEL)
@@ -28,6 +31,9 @@ enum layer_names {
 #define MT_RCTL_E MT(MOD_RCTL,KC_E)
 #define MT_RALT_I MT(MOD_RALT,KC_I)
 #define MT_RGUI_O MT(MOD_RGUI,KC_O)
+
+static const uint8_t MOD_MASK_RIGHT  = 0xF0;
+static const uint8_t MOD_MASK_LEFT = 0x0F;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,--------------+--------------+--------------+--------------+--------------+--------------.                                ,--------------+--------------+--------------+--------------+--------------+--------------.
@@ -146,3 +152,45 @@ const key_override_t override_swap_qoute_and_double_qoute = ko_make_basic(MOD_MA
 const key_override_t *key_overrides[] = {
 	&override_swap_qoute_and_double_qoute
 };
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case LT_NUM_ENT:
+            if(record->event.pressed && get_mods() & MOD_MASK_RIGHT){
+                layer_on(NUM);
+                return false;
+            }
+        break;
+        case LT_SYM_BSPC:
+            if(record->event.pressed && get_mods() & MOD_MASK_RIGHT){
+                layer_on(SYM);
+                return false;
+            }
+        break;
+        case LT_FUN_DEL:
+            if(record->event.pressed && get_mods() & MOD_MASK_RIGHT){
+                layer_on(FUN);
+                return false;
+            }
+        break;
+        case LT_NAV_SPC:
+            if(record->event.pressed && get_mods() & MOD_MASK_LEFT){
+                layer_on(NAV);
+                return false;
+            }
+        break;
+        case LT_MOS_TAB:
+            if(record->event.pressed && get_mods() & MOD_MASK_LEFT){
+                layer_on(MOS);
+                return false;
+            }
+        break;
+        case LT_MED_ESC:
+            if(record->event.pressed && get_mods() & MOD_MASK_LEFT){
+                layer_on(MED);
+                return false;
+            }
+        break;
+    }
+    return true;
+}
