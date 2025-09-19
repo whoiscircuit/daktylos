@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include "print.h"
 
 enum layer_names {
     _COLEMAKDH,
@@ -12,9 +13,6 @@ enum layer_names {
     NUMBER_OF_LAYERS
 };
 
-// enum custom_keycodes {
-//     LT_NUM_ENT = SAFE_RANGE
-// };
 #define LT_NUM_ENT LT(NUM,KC_ENT)
 #define LT_SYM_BSPC LT(SYM,KC_BSPC)
 #define LT_FUN_DEL  LT(FUN,KC_DEL)
