@@ -2,7 +2,6 @@
 #include QMK_KEYBOARD_H
 
 enum layer_names {
-    _JOYSTICK,
     _COLEMAKDH,
     // _QWERTY,
     // _GAMING,
@@ -15,6 +14,7 @@ enum layer_names {
     EXT,
     BLOCK_LEFT,
     BLOCK_RIGHT,
+    _JOYSTICK,
     NUMBER_OF_LAYERS,
 };
 
@@ -325,3 +325,19 @@ uint8_t mod_config(uint8_t mod) {
     return mod;
 }
 #endif
+
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    return OLED_ROTATION_270;  // flips the display 180 degrees if offhand
+}
+bool oled_task_user(void) {
+    oled_write_P(PSTR("\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4"), false);
+    oled_write_P(PSTR("PREFS"),false);
+    oled_write_P(PSTR("     "),false);
+    oled_write_P(PSTR("\x85\x86\x87\x88\x89\xA5\xA6\xA7\xA8\xA9\xC5\xC6\xC7\xC8\xC9"), false);
+    oled_write_P(PSTR(" JOY "),false);
+    oled_write_P(PSTR("STICK"),false);
+    oled_write_P(PSTR("\x8A\x8B\x8C\x8D\x8E\xAA\xAB\xAC\xAD\xAE\xCA\xCB\xCC\xCD\xCE"), false);
+    oled_write_P(PSTR(" GAME"),false);
+    oled_write_P(PSTR(" MODE"),false);
+    return false;
+}
