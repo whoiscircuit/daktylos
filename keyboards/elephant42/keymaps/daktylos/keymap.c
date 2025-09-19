@@ -73,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,     KC_3     ,     KC_2     ,     KC_1     ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   KC_COMM    ,    KC_DOT    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------+-------------,   ,--------------+--------------+--------------+--------------+--------------+--------------`
-                                                     XXXXXXX    ,   XXXXXXX    ,     KC_0     ,   XXXXXXX    ,      _______    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX
+                                                     XXXXXXX    ,   XXXXXXX    ,     KC_0     ,   XXXXXXX    ,      _______    ,   XXXXXXX    ,   QK_BOOT    ,   XXXXXXX
   //                                             `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [SYM] = LAYOUT(
@@ -95,7 +95,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                         KC_F10    ,     KC_F3    ,     KC_F2    ,     KC_F1    ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------+-------------,   ,--------------+--------------+--------------+--------------+--------------+--------------`
-                                                     XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   _______    ,   XXXXXXX
+                                                     XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      QK_BOOT    ,   XXXXXXX    ,   _______    ,   XXXXXXX
   //                                             `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [NAV] = LAYOUT(
@@ -117,7 +117,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,                                    MS_WHLL    ,   MS_WHLD    ,   MS_WHLU    ,   MS_WHLR    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------+-------------,   ,--------------+--------------+--------------+--------------+--------------+--------------`
-                                                     XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   _______    ,      MS_BTN2    ,   MS_BTN1    ,   MS_BTN3    ,   XXXXXXX
+                                                     XXXXXXX    ,   QK_BOOT    ,   XXXXXXX    ,   _______    ,      MS_BTN2    ,   MS_BTN1    ,   MS_BTN3    ,   XXXXXXX
   //                                             `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [MED] = LAYOUT(
@@ -128,7 +128,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------+-------------,   ,--------------+--------------+--------------+--------------+--------------+--------------`
-                                                     XXXXXXX    ,   _______    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   KC_MPLY    ,   KC_MUTE    ,   XXXXXXX
+                                                     XXXXXXX    ,   _______    ,   XXXXXXX    ,   QK_BOOT    ,      XXXXXXX    ,   KC_MPLY    ,   KC_MUTE    ,   XXXXXXX
   //                                             `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [EXT] = LAYOUT(
@@ -147,12 +147,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 const key_override_t override_swap_qoute_and_double_qoute = ko_make_basic(MOD_MASK_SHIFT, KC_DQUO, KC_QUOT);
 const key_override_t override_shift_slash_is_back_slash = ko_make_basic(MOD_MASK_SHIFT, KC_SLSH, KC_BSLS);
 const key_override_t override_swap_minus_and_underscore = ko_make_basic(MOD_MASK_SHIFT, KC_UNDS, KC_MINUS);
+const key_override_t override_shift_comma_is_left_parenthesis = ko_make_basic(MOD_MASK_SHIFT, KC_COMM, KC_LPRN);
+const key_override_t override_shift_dot_is_right_parenthesis = ko_make_basic(MOD_MASK_SHIFT, KC_DOT, KC_RPRN);
 
 // This globally defines all key overrides to be used
 const key_override_t *key_overrides[] = {
 	&override_swap_qoute_and_double_qoute,
     &override_shift_slash_is_back_slash,
-    &override_swap_minus_and_underscore
+    &override_swap_minus_and_underscore,
+    &override_shift_dot_is_right_parenthesis
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
