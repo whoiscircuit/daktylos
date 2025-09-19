@@ -1,6 +1,4 @@
-#include "action.h"
-#include "action_layer.h"
-#include "keycodes.h"
+
 #include QMK_KEYBOARD_H
 
 enum layer_names {
@@ -75,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                          KC_Z     ,     KC_X     ,     KC_C     ,     KC_D     ,     KC_V     ,        KC_K     ,     KC_H     ,    KC_COMM   ,    KC_DOT    ,   KC_SCLN    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                      MY_BOOT    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,    MO(EXT)
+                                      MO(EXT)    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,    MO(EXT)
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [NUM] = LAYOUT(
@@ -191,6 +189,8 @@ const key_override_t *key_overrides[] = {
     &override_swap_qoute_and_double_qoute, &override_shift_slash_is_back_slash, &override_swap_minus_and_underscore, &override_shift_dot_is_right_parenthesis, &override_shift_comma_is_left_parenthesis,
 };
 
+static uint16_t my_boot_timer = 0;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if(get_mods() & MOD_MASK_RIGHT){
         layer_on(BLOCK_RIGHT);
@@ -263,10 +263,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case MY_BOOT:
-            if (!record->event.pressed) {
-                uprintf("tap: %d\n", record->tap.count);
+            if (record->event.pressed) {
+                my_boot_timer = timer_read();
             }
-            return true;
+            else {
+                if(timer_elapsed(my_boot_timer) > g_tapping_term * 2){
+                    reset_keyboard();
+                }
+                else {
+                    soft_reset_keyboard();
+                }
+            }
+            return false;
             break;
     }
     return true;
@@ -281,11 +289,14 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case MT_RSFT_N:
+        case MT_LSFT_T:
+            return g_tapping_term * 1.2;
         case LT_NAV_SPC:
         case LT_SYM_BSPC:
             return g_tapping_term;
         default:
-            return g_tapping_term * 0.7;
+            return g_tapping_term * 0.8;
     }
 }
 
