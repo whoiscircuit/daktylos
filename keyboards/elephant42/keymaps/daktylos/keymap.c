@@ -9,35 +9,36 @@ enum layer_names {
     MOS,
     MED,
     EXT,
-    NUMBER_OF_LAYERS
+    NUMBER_OF_LAYERS,
 };
 
-#define LT_NUM_ENT LT(NUM,KC_ENT)
-#define LT_SYM_BSPC LT(SYM,KC_BSPC)
-#define LT_FUN_DEL  LT(FUN,KC_DEL)
-#define LT_NAV_SPC LT(NAV,KC_SPC)
-#define LT_MOS_TAB LT(MOS,KC_TAB)
-#define LT_MED_ESC LT(MED,KC_ESC)
+#define LT_NUM_ENT LT(NUM, KC_ENT)
+#define LT_SYM_BSPC LT(SYM, KC_BSPC)
+#define LT_FUN_DEL LT(FUN, KC_DEL)
+#define LT_NAV_SPC LT(NAV, KC_SPC)
+#define LT_MOS_TAB LT(MOS, KC_TAB)
+#define LT_MED_ESC LT(MED, KC_ESC)
 
-#define MT_LGUI_A MT(MOD_LGUI,KC_A)
-#define MT_LALT_R MT(MOD_LALT,KC_R)
-#define MT_LCTL_S MT(MOD_LCTL,KC_S)
-#define MT_LSFT_T MT(MOD_LSFT,KC_T)
+#define MT_LGUI_A MT(MOD_LGUI, KC_A)
+#define MT_LALT_R MT(MOD_LALT, KC_R)
+#define MT_LCTL_S MT(MOD_LCTL, KC_S)
+#define MT_LSFT_T MT(MOD_LSFT, KC_T)
 
-#define MT_RSFT_N MT(MOD_RSFT,KC_N)
-#define MT_RCTL_E MT(MOD_RCTL,KC_E)
-#define MT_RALT_I MT(MOD_RALT,KC_I)
-#define MT_RGUI_O MT(MOD_RGUI,KC_O)
+#define MT_RSFT_N MT(MOD_RSFT, KC_N)
+#define MT_RCTL_E MT(MOD_RCTL, KC_E)
+#define MT_RALT_I MT(MOD_RALT, KC_I)
+#define MT_RGUI_O MT(MOD_RGUI, KC_O)
 
-static const uint8_t MOD_MASK_RIGHT  = 0xF0;
-static const uint8_t MOD_MASK_LEFT = 0x0F;
+static const uint8_t MOD_MASK_RIGHT = 0xF0;
+static const uint8_t MOD_MASK_LEFT  = 0x0F;
 
 enum custom_keycodes {
-    MY_BOOT = SAFE_RANGE
+    MY_BOOT = SAFE_RANGE,
 };
 
 #define GET_LT_LAYER(lt_value) ((lt_value & 0x0F00) >> 8)
 
+// clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
   //    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
@@ -148,21 +149,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   )
 };
+// clang-format on
 
-const key_override_t override_swap_qoute_and_double_qoute = ko_make_basic(MOD_MASK_SHIFT, KC_DQUO, KC_QUOT);
-const key_override_t override_shift_slash_is_back_slash = ko_make_basic(MOD_MASK_SHIFT, KC_SLSH, KC_BSLS);
-const key_override_t override_swap_minus_and_underscore = ko_make_basic(MOD_MASK_SHIFT, KC_UNDS, KC_MINUS);
+const key_override_t override_swap_qoute_and_double_qoute     = ko_make_basic(MOD_MASK_SHIFT, KC_DQUO, KC_QUOT);
+const key_override_t override_shift_slash_is_back_slash       = ko_make_basic(MOD_MASK_SHIFT, KC_SLSH, KC_BSLS);
+const key_override_t override_swap_minus_and_underscore       = ko_make_basic(MOD_MASK_SHIFT, KC_UNDS, KC_MINUS);
 const key_override_t override_shift_comma_is_left_parenthesis = ko_make_basic(MOD_MASK_SHIFT, KC_COMM, KC_LPRN);
-const key_override_t override_shift_dot_is_right_parenthesis = ko_make_basic(MOD_MASK_SHIFT, KC_DOT, KC_RPRN);
-
+const key_override_t override_shift_dot_is_right_parenthesis  = ko_make_basic(MOD_MASK_SHIFT, KC_DOT, KC_RPRN);
 
 // This globally defines all key overrides to be used
 const key_override_t *key_overrides[] = {
-	&override_swap_qoute_and_double_qoute,
-    &override_shift_slash_is_back_slash,
-    &override_swap_minus_and_underscore,
-    &override_shift_dot_is_right_parenthesis,
-    &override_shift_comma_is_left_parenthesis
+    &override_swap_qoute_and_double_qoute, &override_shift_slash_is_back_slash, &override_swap_minus_and_underscore, &override_shift_dot_is_right_parenthesis, &override_shift_comma_is_left_parenthesis,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -170,31 +167,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT_NUM_ENT:
         case LT_SYM_BSPC:
         case LT_FUN_DEL:
-            if(get_mods() & MOD_MASK_RIGHT){
-                if(record->event.pressed){
+            if (get_mods() & MOD_MASK_RIGHT) {
+                if (record->event.pressed) {
                     layer_on(GET_LT_LAYER(keycode));
                     return false;
-                }
-                else {
+                } else {
                     layer_off(GET_LT_LAYER(keycode));
                     return false;
                 }
             }
-        break;
+            break;
         case LT_NAV_SPC:
         case LT_MOS_TAB:
         case LT_MED_ESC:
-            if(record->event.pressed && get_mods() & MOD_MASK_LEFT){
+            if (record->event.pressed && get_mods() & MOD_MASK_LEFT) {
                 layer_on(GET_LT_LAYER(keycode));
                 return false;
             }
-        break;
+            break;
         case MY_BOOT:
-            if(!record->event.pressed){
-                uprintf("tap: %d\n",record->tap.count);
+            if (!record->event.pressed) {
+                uprintf("tap: %d\n", record->tap.count);
             }
             return true;
-        break;
+            break;
     }
     return true;
 }
