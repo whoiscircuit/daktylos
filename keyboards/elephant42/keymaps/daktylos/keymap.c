@@ -33,6 +33,12 @@ enum layer_names {
 static const uint8_t MOD_MASK_RIGHT  = 0xF0;
 static const uint8_t MOD_MASK_LEFT = 0x0F;
 
+enum custom_keycodes {
+    MY_BOOT = SAFE_RANGE
+};
+
+#define GET_LT_LAYER(lt_value) ((lt_value & 0x0F00) >> 8)
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,--------------+--------------+--------------+--------------+--------------+--------------.                                ,--------------+--------------+--------------+--------------+--------------+--------------.
   //    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
@@ -73,7 +79,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,     KC_3     ,     KC_2     ,     KC_1     ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   KC_COMM    ,    KC_DOT    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------+-------------,   ,--------------+--------------+--------------+--------------+--------------+--------------`
-                                                     XXXXXXX    ,   XXXXXXX    ,     KC_0     ,   XXXXXXX    ,      _______    ,   XXXXXXX    ,   QK_BOOT    ,   XXXXXXX
+                                                     XXXXXXX    ,   XXXXXXX    ,     KC_0     ,   XXXXXXX    ,      _______    ,   XXXXXXX    ,   MY_BOOT    ,   XXXXXXX
   //                                             `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [SYM] = LAYOUT(
@@ -95,7 +101,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                         KC_F10    ,     KC_F3    ,     KC_F2    ,     KC_F1    ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------+-------------,   ,--------------+--------------+--------------+--------------+--------------+--------------`
-                                                     XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      QK_BOOT    ,   XXXXXXX    ,   _______    ,   XXXXXXX
+                                                     XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      MY_BOOT    ,   XXXXXXX    ,   _______    ,   XXXXXXX
   //                                             `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [NAV] = LAYOUT(
@@ -117,7 +123,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,                                    MS_WHLL    ,   MS_WHLD    ,   MS_WHLU    ,   MS_WHLR    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------+-------------,   ,--------------+--------------+--------------+--------------+--------------+--------------`
-                                                     XXXXXXX    ,   QK_BOOT    ,   XXXXXXX    ,   _______    ,      MS_BTN2    ,   MS_BTN1    ,   MS_BTN3    ,   XXXXXXX
+                                                     XXXXXXX    ,   MY_BOOT    ,   XXXXXXX    ,   _______    ,      MS_BTN2    ,   MS_BTN1    ,   MS_BTN3    ,   XXXXXXX
   //                                             `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [MED] = LAYOUT(
@@ -128,7 +134,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------+-------------,   ,--------------+--------------+--------------+--------------+--------------+--------------`
-                                                     XXXXXXX    ,   _______    ,   XXXXXXX    ,   QK_BOOT    ,      XXXXXXX    ,   KC_MPLY    ,   KC_MUTE    ,   XXXXXXX
+                                                     XXXXXXX    ,   _______    ,   XXXXXXX    ,   MY_BOOT    ,      XXXXXXX    ,   KC_MPLY    ,   KC_MUTE    ,   XXXXXXX
   //                                             `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [EXT] = LAYOUT(
@@ -150,50 +156,37 @@ const key_override_t override_swap_minus_and_underscore = ko_make_basic(MOD_MASK
 const key_override_t override_shift_comma_is_left_parenthesis = ko_make_basic(MOD_MASK_SHIFT, KC_COMM, KC_LPRN);
 const key_override_t override_shift_dot_is_right_parenthesis = ko_make_basic(MOD_MASK_SHIFT, KC_DOT, KC_RPRN);
 
+
 // This globally defines all key overrides to be used
 const key_override_t *key_overrides[] = {
 	&override_swap_qoute_and_double_qoute,
     &override_shift_slash_is_back_slash,
     &override_swap_minus_and_underscore,
-    &override_shift_dot_is_right_parenthesis
+    &override_shift_dot_is_right_parenthesis,
+    &override_shift_comma_is_left_parenthesis
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT_NUM_ENT:
-            if(record->event.pressed && get_mods() & MOD_MASK_RIGHT){
-                layer_on(NUM);
-                return false;
-            }
-        break;
         case LT_SYM_BSPC:
-            if(record->event.pressed && get_mods() & MOD_MASK_RIGHT){
-                layer_on(SYM);
-                return false;
-            }
-        break;
         case LT_FUN_DEL:
             if(record->event.pressed && get_mods() & MOD_MASK_RIGHT){
-                layer_on(FUN);
+                layer_on(GET_LT_LAYER(keycode));
                 return false;
             }
         break;
         case LT_NAV_SPC:
-            if(record->event.pressed && get_mods() & MOD_MASK_LEFT){
-                layer_on(NAV);
-                return false;
-            }
-        break;
         case LT_MOS_TAB:
-            if(record->event.pressed && get_mods() & MOD_MASK_LEFT){
-                layer_on(MOS);
-                return false;
-            }
-        break;
         case LT_MED_ESC:
             if(record->event.pressed && get_mods() & MOD_MASK_LEFT){
-                layer_on(MED);
+                layer_on(GET_LT_LAYER(keycode));
                 return false;
+            }
+        break;
+        case MY_BOOT:
+            if(!record->event.pressed){
+                uprintf("tab: %d",record->tap.count);
             }
         break;
     }
