@@ -1,5 +1,4 @@
 #include QMK_KEYBOARD_H
-#include "print.h"
 
 enum layer_names {
     _COLEMAKDH,
@@ -141,7 +140,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,--------------+--------------+--------------+--------------+--------------+--------------.                                ,--------------+--------------+--------------+--------------+--------------+--------------.
         XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,KC_SCROLL_LOCK,   XXXXXXX    ,
   //|--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------|
-        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    , KC_CAPS_LOCK ,   XXXXXXX    ,
+        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,                                    DT_PRNT    ,   DT_DOWN    ,     DT_UP    ,   XXXXXXX    , KC_CAPS_LOCK ,   XXXXXXX    ,
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,                                    XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,  KC_NUM_LOCK ,
   //               `--------------+--------------+--------------+--------------+--------------+-------------,   ,--------------+--------------+--------------+--------------+--------------+--------------`
@@ -199,10 +198,32 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     return true;
 }
-void keyboard_post_init_user(void) {
-  // Customise these values to desired behaviour
-  debug_enable=true;
-  //debug_matrix=true;
-  //debug_keyboard=true;
-  //debug_mouse=true;
+
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        default:
+            return g_tapping_term;
+    }
 }
+
+uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case LT_NAV_SPC:
+        case LT_SYM_BSPC:
+            return g_tapping_term;
+        default:
+            return g_tapping_term * 0.7;
+    }
+}
+
+#ifndef MAGIC_ENABLE
+uint16_t keycode_config(uint16_t keycode) {
+    return keycode;
+}
+#endif
+
+#ifndef MAGIC_ENABLE
+uint8_t mod_config(uint8_t mod) {
+    return mod;
+}
+#endif
