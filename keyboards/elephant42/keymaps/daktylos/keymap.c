@@ -68,7 +68,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|                                |--------------+--------------+--------------+--------------+--------------+--------------'
                          KC_Z     ,     KC_X     ,     KC_C     ,     KC_D     ,     KC_V     ,                                      KC_K     ,     KC_H     ,    KC_COMM   ,    KC_DOT    ,   KC_SCLN    ,
   //               `--------------+--------------+--------------+--------------+--------------+--------------,  ,--------------+--------------+--------------+--------------+--------------+--------------`
-                                                     MO(EXT)    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,    MO(EXT)
+                                                     MY_BOOT    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,    MO(EXT)
   //                                             `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [NUM] = LAYOUT(
@@ -171,9 +171,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT_NUM_ENT:
         case LT_SYM_BSPC:
         case LT_FUN_DEL:
-            if(record->event.pressed && get_mods() & MOD_MASK_RIGHT){
-                layer_on(GET_LT_LAYER(keycode));
-                return false;
+            if(get_mods() & MOD_MASK_RIGHT){
+                if(record->event.pressed){
+                    layer_on(GET_LT_LAYER(keycode));
+                    return false;
+                }
+                else {
+                    layer_off(GET_LT_LAYER(keycode));
+                    return false;
+                }
             }
         break;
         case LT_NAV_SPC:
@@ -186,9 +192,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         break;
         case MY_BOOT:
             if(!record->event.pressed){
-                uprintf("tab: %d",record->tap.count);
+                uprintf("tap: %d\n",record->tap.count);
             }
+            return true;
         break;
     }
     return true;
+}
+void keyboard_post_init_user(void) {
+  // Customise these values to desired behaviour
+  debug_enable=true;
+  //debug_matrix=true;
+  //debug_keyboard=true;
+  //debug_mouse=true;
 }
