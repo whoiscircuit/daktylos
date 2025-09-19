@@ -1,3 +1,4 @@
+#include "action.h"
 #include QMK_KEYBOARD_H
 
 enum layer_names {
@@ -36,7 +37,9 @@ enum custom_keycodes {
     MY_BOOT = SAFE_RANGE,
 };
 
-#define GET_LT_LAYER(lt_value) ((lt_value & 0x0F00) >> 8)
+#define GET_MOD_FROM_TAP_HOLD(tap_hold_keycode) (((tap_hold_keycode) & 0x0F00) >> 8)
+#define GET_LAYER_FROM_TAP_HOLD(tap_hold_keycode) (((tap_hold_keycode) & 0x0F00) >> 8)
+#define GET_KEYCODE_FROM_TAP_HOLD(tap_hold_keycode) ((tap_hold_keycode) & 0xFF)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -169,20 +172,56 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT_FUN_DEL:
             if (get_mods() & MOD_MASK_RIGHT) {
                 if (record->event.pressed) {
-                    layer_on(GET_LT_LAYER(keycode));
-                    return false;
+                    layer_on(GET_LAYER_FROM_TAP_HOLD(keycode));
                 } else {
-                    layer_off(GET_LT_LAYER(keycode));
-                    return false;
+                    layer_off(GET_LAYER_FROM_TAP_HOLD(keycode));
                 }
+                return false;
             }
             break;
         case LT_NAV_SPC:
         case LT_MOS_TAB:
         case LT_MED_ESC:
-            if (record->event.pressed && get_mods() & MOD_MASK_LEFT) {
-                layer_on(GET_LT_LAYER(keycode));
+            if (get_mods() & MOD_MASK_LEFT) {
+                if (record->event.pressed) {
+                    layer_on(GET_LAYER_FROM_TAP_HOLD(keycode));
+                } else {
+                    layer_off(GET_LAYER_FROM_TAP_HOLD(keycode));
+                }
                 return false;
+            }
+            break;
+        case MT_LSFT_T:
+            if(get_mods() & MOD_BIT(KC_RSFT)) break;
+        case MT_LCTL_S:
+        case MT_LALT_R:
+        case MT_LGUI_A:
+            if (record->event.pressed) {
+                if(get_mods() & MOD_MASK_RIGHT){
+                    register_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
+                    return false;
+                }
+            }
+            else{
+                unregister_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
+                return true;
+            }
+            break;
+
+        case MT_RSFT_N:
+            if(get_mods() & MOD_BIT(KC_LSFT)) break;
+        case MT_RCTL_E:
+        case MT_RALT_I:
+        case MT_RGUI_O:
+            if (record->event.pressed) {
+                if(get_mods() & MOD_MASK_LEFT){
+                    register_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
+                    return false;
+                }
+            }
+            else{
+                unregister_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
+                return true;
             }
             break;
         case MY_BOOT:
