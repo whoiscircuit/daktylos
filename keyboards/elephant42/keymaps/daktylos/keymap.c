@@ -1,4 +1,10 @@
 
+#include "action_layer.h"
+#include "keyboard.h"
+#include "matrix.h"
+#include "oled_driver.h"
+#include "quantum.h"
+#include "timer.h"
 #include QMK_KEYBOARD_H
 
 enum layer_names {
@@ -11,10 +17,10 @@ enum layer_names {
     NAV,
     MOS,
     MED,
-    EXT,
     BLOCK_LEFT,
     BLOCK_RIGHT,
     _JOYSTICK,
+    _MENU,
     NUMBER_OF_LAYERS,
 };
 
@@ -40,6 +46,12 @@ static const uint8_t MOD_MASK_LEFT  = 0x0F;
 
 enum custom_keycodes {
     MY_BOOT = SAFE_RANGE,
+    MY_MENU,
+    MY_UP,
+    MY_DOWN,
+    MY_LEFT,
+    MY_RIGHT,
+    MY_SELECT
 };
 
 #define GET_MOD_FROM_TAP_HOLD(tap_hold_keycode) (((tap_hold_keycode) & 0x0F00) >> 8)
@@ -76,7 +88,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                          KC_Z     ,     KC_X     ,     KC_C     ,     KC_D     ,     KC_V     ,        KC_K     ,     KC_H     ,    KC_COMM   ,    KC_DOT    ,   KC_SCLN    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                      MO(EXT)    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,    MO(EXT)
+                                      MY_MENU    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,   MY_MENU
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [NUM] = LAYOUT(
@@ -145,15 +157,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                       XXXXXXX    ,   _______    ,   XXXXXXX    ,   MY_BOOT    ,      XXXXXXX    ,   KC_MPLY    ,   KC_MUTE    ,   XXXXXXX
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
-  [EXT] = LAYOUT(
+  [_MENU] = LAYOUT(
   //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
         XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,KC_SCROLL_LOCK,   XXXXXXX    ,
   //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
-        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      DT_PRNT    ,   DT_DOWN    ,     DT_UP    ,   XXXXXXX    , KC_CAPS_LOCK ,   XXXXXXX    ,
+        XXXXXXX    ,   XXXXXXX    ,   MY_LEFT    ,    MY_UP     ,   MY_DOWN    ,   MY_RIGHT   ,      MY_LEFT    ,   MY_DOWN    ,    MY_UP     ,   MY_RIGHT   , KC_CAPS_LOCK ,   XXXXXXX    ,
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,  KC_NUM_LOCK ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                      _______    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   _______
+                                      MY_MENU    ,   MY_BOOT    ,  MY_SELECT   ,   MY_BOOT    ,      MY_BOOT    ,  MY_SELECT   ,   MY_BOOT    ,   MY_MENU
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [BLOCK_LEFT] = LAYOUT(
@@ -203,7 +215,38 @@ const key_override_t *key_overrides[] = {
     &override_swap_qoute_and_double_qoute, &override_shift_slash_is_back_slash, &override_swap_minus_and_underscore, &override_shift_dot_is_right_parenthesis, &override_shift_comma_is_left_parenthesis,
 };
 
+enum OLED_STATE {
+    OLED_OFF,
+    OLED_MENU,
+    OLED_PREFS,
+    OLED_JOYSTICK,
+    OLED_BOOTLOADER
+};
+enum OLED_MENU {
+    MENU_GAME_MODE,
+    MENU_JOYSTICK,
+    MENU_PREFS
+};
+struct {
+    unsigned state : 3;
+    unsigned menu_index : 2;
+} oled_data = {OLED_OFF,MENU_GAME_MODE};
+
 static uint16_t my_boot_timer = 0;
+static bool jump_to_bootloader = false;
+
+struct MenuItem {
+    char icon[16];
+    char top_title[6];
+    char bottom_tittle[6];
+};
+
+static const struct MenuItem PROGMEM menu_items[] = {
+    {"\x8A\x8B\x8C\x8D\x8E\xAA\xAB\xAC\xAD\xAE\xCA\xCB\xCC\xCD\xCE"," GAME"," MODE"},
+    {"\x85\x86\x87\x88\x89\xA5\xA6\xA7\xA8\xA9\xC5\xC6\xC7\xC8\xC9"," JOY ","STICK"},
+    {"\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4","PREFS","     "},
+    {"\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3","FLASH","     "}
+};
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if(get_mods() & MOD_MASK_RIGHT){
@@ -282,13 +325,54 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             else {
                 if(timer_elapsed(my_boot_timer) > g_tapping_term * 2){
-                    reset_keyboard();
+                    oled_data.state = OLED_BOOTLOADER;
+                    jump_to_bootloader = true;
+                    my_boot_timer = timer_read();
                 }
                 else {
                     soft_reset_keyboard();
                 }
             }
             return false;
+            break;
+        case MY_MENU:
+            if(!record->event.pressed){
+                if(oled_data.state == OLED_MENU){
+                    set_single_default_layer(_COLEMAKDH);
+                    oled_data.state = OLED_OFF;
+                }
+                else{
+                    set_single_default_layer(_MENU);
+                    oled_data.menu_index = 0;
+                    oled_data.state = OLED_MENU;
+                }
+            }
+            break;
+        case MY_DOWN:
+            if(!record->event.pressed){
+                oled_data.menu_index = (oled_data.menu_index + 1) % (sizeof(menu_items)/sizeof(menu_items[0]));
+            }
+            break;
+        case MY_UP:
+            if(!record->event.pressed){
+                if(oled_data.menu_index == 0) oled_data.menu_index = (sizeof(menu_items)/sizeof(menu_items[0])) - 1;
+                else oled_data.menu_index = (oled_data.menu_index - 1) % (sizeof(menu_items)/sizeof(menu_items[0]));
+            }
+            break;
+        case MY_SELECT:
+            if(!record->event.pressed){
+                switch (oled_data.menu_index) {
+                    case MENU_GAME_MODE:
+                        break;
+                    case MENU_JOYSTICK:
+                        set_single_default_layer(_JOYSTICK);
+                        oled_data.state = OLED_JOYSTICK;
+                        break;
+                    case MENU_PREFS:
+                        oled_data.state = OLED_PREFS;
+                        break;
+                }
+            }
             break;
     }
     return true;
@@ -329,15 +413,41 @@ uint8_t mod_config(uint8_t mod) {
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_270;  // flips the display 180 degrees if offhand
 }
+
+uint8_t i = 0;
 bool oled_task_user(void) {
-    oled_write_P(PSTR("\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4"), false);
-    oled_write_P(PSTR("PREFS"),false);
-    oled_write_P(PSTR("     "),false);
-    oled_write_P(PSTR("\x85\x86\x87\x88\x89\xA5\xA6\xA7\xA8\xA9\xC5\xC6\xC7\xC8\xC9"), false);
-    oled_write_P(PSTR(" JOY "),false);
-    oled_write_P(PSTR("STICK"),false);
-    oled_write_P(PSTR("\x8A\x8B\x8C\x8D\x8E\xAA\xAB\xAC\xAD\xAE\xCA\xCB\xCC\xCD\xCE"), false);
-    oled_write_P(PSTR(" GAME"),false);
-    oled_write_P(PSTR(" MODE"),false);
+    oled_clear();
+    if(!is_keyboard_master()) return false;
+    switch(oled_data.state){
+        case OLED_OFF:
+            break;
+        case OLED_MENU:
+            for(i = (oled_data.menu_index / 3) * 3;i<(oled_data.menu_index / 3) * 3 + 3;i++){
+                if(i>=sizeof(menu_items)/sizeof(menu_items[0])) break;
+                oled_write_P(menu_items[i].icon,oled_data.menu_index == i);
+                oled_write_P(menu_items[i].top_title,oled_data.menu_index == i);
+                oled_write_P(menu_items[i].bottom_tittle,oled_data.menu_index == i);
+            }
+            break;
+        case OLED_BOOTLOADER:
+            oled_write_P(PSTR("     "),false);
+            oled_write_P(PSTR("     "),false);
+            oled_write_P(PSTR("     "),false);
+            oled_write_P(PSTR("     "),false);
+            oled_write_P(PSTR("\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3"),false);
+            oled_write_P(PSTR("     "),false);
+            oled_write_P(PSTR("FLASH"),false);
+            oled_write_P(PSTR(" NOW "),false);
+            break;
+        case OLED_JOYSTICK:
+        break;
+    }
     return false;
+}
+
+
+void matrix_scan_user(void){
+    if(jump_to_bootloader && timer_elapsed(my_boot_timer) > 200){
+        reset_keyboard();
+    }
 }
