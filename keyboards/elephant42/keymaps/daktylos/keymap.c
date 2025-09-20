@@ -184,13 +184,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_JOYSTICK] = LAYOUT(
   //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
-          JS_14    ,     JS_3     ,   XXXXXXX    ,   XXXXXXX    ,     JS_12    ,    XXXXXXX   ,       XXXXXXX   ,     JS_12    ,   XXXXXXX    ,   XXXXXXX    ,     JS_3     ,     JS_14    ,
+          JS_13    ,     JS_2     ,   XXXXXXX    ,   XXXXXXX    ,     JS_11    ,    XXXXXXX   ,       XXXXXXX   ,     JS_27    ,   XXXXXXX    ,   XXXXXXX    ,     JS_18    ,     JS_29    ,
   //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
-          JS_15    ,     JS_2     ,     JS_1     ,   XXXXXXX    ,   XXXXXXX    ,     JS_13    ,        JS_13    ,   XXXXXXX    ,   XXXXXXX    ,     JS_1     ,     JS_2     ,     JS_15    ,
+          JS_14    ,     JS_1     ,     JS_0     ,   XXXXXXX    ,   XXXXXXX    ,     JS_12    ,        JS_28    ,   XXXXXXX    ,   XXXXXXX    ,     JS_16    ,     JS_17    ,     JS_30    ,
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
-                         JS_16    ,     JS_4     ,     JS_10    ,     JS_9     ,     JS_11    ,        JS_11    ,      JS_9    ,     JS_10    ,     JS_4     ,     JS_16    ,
+                         JS_15    ,     JS_3     ,     JS_10    ,     JS_9     ,     JS_8     ,        JS_24    ,     JS_25    ,     JS_26    ,     JS_19    ,     JS_31    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                        JS_8     ,     JS_6     ,     JS_5     ,     JS_7     ,        JS_7     ,     JS_5     ,     JS_6     ,     JS_8
+                                        JS_7     ,     JS_6     ,     JS_5     ,     JS_4     ,        JS_20    ,     JS_21    ,     JS_22   ,     JS_23
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   )
 };
@@ -393,6 +393,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 uint8_t i=0;
+uint8_t j=0;
 bool oled_task_user(void) {
     oled_clear();
     if(!is_keyboard_master()) return false;
@@ -415,8 +416,11 @@ bool oled_task_user(void) {
             oled_write_P(PSTR(" NOW "),false);
             break;
         case OLED_JOYSTICK:
+            oled_set_cursor(0,4);
             oled_write_P(menu_items[MENU_JOYSTICK].icon,false);
-            oled_advance_page(true);
+            oled_write_P(menu_items[MENU_JOYSTICK].top_title,false);
+            oled_write_P(menu_items[MENU_JOYSTICK].bottom_tittle,false);
+            oled_write_P(PSTR("MODE."),false);
         break;
     }
     return false;
