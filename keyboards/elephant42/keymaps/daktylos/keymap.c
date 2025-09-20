@@ -1,10 +1,3 @@
-
-#include "action_layer.h"
-#include "keyboard.h"
-#include "matrix.h"
-#include "oled_driver.h"
-#include "quantum.h"
-#include "timer.h"
 #include QMK_KEYBOARD_H
 
 enum layer_names {
@@ -45,8 +38,7 @@ static const uint8_t MOD_MASK_RIGHT = 0xF0;
 static const uint8_t MOD_MASK_LEFT  = 0x0F;
 
 enum custom_keycodes {
-    MY_BOOT = SAFE_RANGE,
-    MY_MENU,
+    MY_MENU = SAFE_RANGE,
     MY_UP,
     MY_DOWN,
     MY_LEFT,
@@ -99,7 +91,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,     KC_3     ,     KC_2     ,     KC_1     ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   KC_COMM    ,    KC_DOT    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                      XXXXXXX    ,   XXXXXXX    ,     KC_0     ,   XXXXXXX    ,      _______    ,   XXXXXXX    ,   MY_BOOT    ,   XXXXXXX
+                                      XXXXXXX    ,   XXXXXXX    ,     KC_0     ,   XXXXXXX    ,      _______    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [SYM] = LAYOUT(
@@ -121,7 +113,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                         KC_F10    ,     KC_F3    ,     KC_F2    ,     KC_F1    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      MY_BOOT    ,   XXXXXXX    ,   _______    ,   XXXXXXX
+                                      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   _______    ,   XXXXXXX
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [NAV] = LAYOUT(
@@ -143,7 +135,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      MS_WHLL    ,   MS_WHLD    ,   MS_WHLU    ,   MS_WHLR    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                      XXXXXXX    ,   MY_BOOT    ,   XXXXXXX    ,   _______    ,      MS_BTN2    ,   MS_BTN1    ,   MS_BTN3    ,   XXXXXXX
+                                      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   _______    ,      MS_BTN2    ,   MS_BTN1    ,   MS_BTN3    ,   XXXXXXX
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [MED] = LAYOUT(
@@ -154,7 +146,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                      XXXXXXX    ,   _______    ,   XXXXXXX    ,   MY_BOOT    ,      XXXXXXX    ,   KC_MPLY    ,   KC_MUTE    ,   XXXXXXX
+                                      XXXXXXX    ,   _______    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   KC_MPLY    ,   KC_MUTE    ,   XXXXXXX
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [_MENU] = LAYOUT(
@@ -165,7 +157,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,  KC_NUM_LOCK ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                      MY_MENU    ,   MY_BOOT    ,  MY_SELECT   ,   MY_BOOT    ,      MY_BOOT    ,  MY_SELECT   ,   MY_BOOT    ,   MY_MENU
+                                      MY_MENU    ,   XXXXXXX    ,  MY_SELECT   ,   XXXXXXX    ,      XXXXXXX    ,  MY_SELECT   ,   XXXXXXX    ,   MY_MENU
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [BLOCK_LEFT] = LAYOUT(
@@ -225,7 +217,8 @@ enum OLED_STATE {
 enum OLED_MENU {
     MENU_GAME_MODE,
     MENU_JOYSTICK,
-    MENU_PREFS
+    MENU_PREFS,
+    MENU_FLASH
 };
 struct {
     unsigned state : 3;
@@ -233,6 +226,7 @@ struct {
 } oled_data = {OLED_OFF,MENU_GAME_MODE};
 
 static uint16_t my_boot_timer = 0;
+static uint16_t my_boot_hold_timer = 0;
 static bool jump_to_bootloader = false;
 
 struct MenuItem {
@@ -242,10 +236,10 @@ struct MenuItem {
 };
 
 static const struct MenuItem PROGMEM menu_items[] = {
-    {"\x8A\x8B\x8C\x8D\x8E\xAA\xAB\xAC\xAD\xAE\xCA\xCB\xCC\xCD\xCE"," GAME"," MODE"},
-    {"\x85\x86\x87\x88\x89\xA5\xA6\xA7\xA8\xA9\xC5\xC6\xC7\xC8\xC9"," JOY ","STICK"},
-    {"\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4","PREFS","     "},
-    {"\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3","FLASH","     "}
+    [MENU_GAME_MODE] = {"\x8A\x8B\x8C\x8D\x8E\xAA\xAB\xAC\xAD\xAE\xCA\xCB\xCC\xCD\xCE"," GAME"," MODE"},
+    [MENU_JOYSTICK] = {"\x85\x86\x87\x88\x89\xA5\xA6\xA7\xA8\xA9\xC5\xC6\xC7\xC8\xC9"," JOY ","STICK"},
+    [MENU_PREFS] = {"\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4","PREFS","     "},
+    [MENU_FLASH] = {"\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3","FLASH","     "},
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -318,22 +312,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
                 return true;
             }
-            break;
-        case MY_BOOT:
-            if (record->event.pressed) {
-                my_boot_timer = timer_read();
-            }
-            else {
-                if(timer_elapsed(my_boot_timer) > g_tapping_term * 2){
-                    oled_data.state = OLED_BOOTLOADER;
-                    jump_to_bootloader = true;
-                    my_boot_timer = timer_read();
-                }
-                else {
-                    soft_reset_keyboard();
-                }
-            }
-            return false;
             break;
         case MY_MENU:
             if(!record->event.pressed){
@@ -414,7 +392,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_270;  // flips the display 180 degrees if offhand
 }
 
-uint8_t i = 0;
+uint8_t i=0;
 bool oled_task_user(void) {
     oled_clear();
     if(!is_keyboard_master()) return false;
@@ -430,16 +408,15 @@ bool oled_task_user(void) {
             }
             break;
         case OLED_BOOTLOADER:
-            oled_write_P(PSTR("     "),false);
-            oled_write_P(PSTR("     "),false);
-            oled_write_P(PSTR("     "),false);
-            oled_write_P(PSTR("     "),false);
-            oled_write_P(PSTR("\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3"),false);
-            oled_write_P(PSTR("     "),false);
+            oled_set_cursor(0,4);
+            oled_write_P(menu_items[MENU_FLASH].icon,false);
+            oled_advance_page(true);
             oled_write_P(PSTR("FLASH"),false);
             oled_write_P(PSTR(" NOW "),false);
             break;
         case OLED_JOYSTICK:
+            oled_write_P(menu_items[MENU_JOYSTICK].icon,false);
+            oled_advance_page(true);
         break;
     }
     return false;
@@ -449,5 +426,22 @@ bool oled_task_user(void) {
 void matrix_scan_user(void){
     if(jump_to_bootloader && timer_elapsed(my_boot_timer) > 200){
         reset_keyboard();
+    }
+    // logic for restart and jumping to bootloader based on pressing the two thumb keys
+    if((matrix_is_on(7,5) && matrix_is_on(7,3)) || (matrix_is_on(3,3) && matrix_is_on(3,5))){
+        if(my_boot_hold_timer == 0){
+            my_boot_hold_timer = timer_read();
+        }
+    }
+    else if(my_boot_hold_timer != 0){
+        if(timer_elapsed(my_boot_hold_timer) > g_tapping_term * 2){
+            oled_data.state = OLED_BOOTLOADER;
+            jump_to_bootloader = true;
+            my_boot_timer = timer_read();
+        }
+        else if(timer_elapsed(my_boot_hold_timer) > g_tapping_term / 2){
+            soft_reset_keyboard();
+        }
+        my_boot_hold_timer = 0;
     }
 }
