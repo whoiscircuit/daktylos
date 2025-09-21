@@ -1,3 +1,4 @@
+#include "oled_driver.h"
 #include QMK_KEYBOARD_H
 
 enum layer_names {
@@ -243,7 +244,7 @@ struct MenuItem {
 };
 struct PrefsItem {
     const char top_title[6];
-    const char bottom_tittle[6];
+    const char bottom_title[6];
     uint16_t  *value;
 };
 
@@ -337,6 +338,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         break;
                     case OLED_PREFS:
                         set_single_default_layer(_MENU);
+                        oled_data.prefs_index = 0;
                         oled_data.state = OLED_MENU;
                         break;
                     default:
@@ -381,6 +383,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     case MENU_PREFS:
                         set_single_default_layer(_MENU);
                         oled_data.state = OLED_PREFS;
+                        oled_data.prefs_index = 0;
                         break;
                 }
             }
@@ -428,9 +431,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_270; // flips the display 180 degrees if offhand
 }
 
-uint8_t i      = 0;
-uint8_t j      = 0;
-char    val[4] = "";
+static uint8_t i      = 0;
 
 bool oled_task_user(void) {
     oled_clear();
@@ -459,21 +460,18 @@ bool oled_task_user(void) {
             oled_write_P(menu_items[MENU_JOYSTICK].bottom_title, false);
             break;
         case OLED_PREFS:
-            // for (i = (oled_data.prefs_index / 4) * 4; i < (oled_data.prefs_index / 4) * 4 + 4; i++) {
-            //     if (i >= sizeof(prefs_items) / sizeof(prefs_items[0])) break;
-            //     oled_write_P(prefs_items[i].top_title, oled_data.prefs_index == i);
-            //     oled_write_P(prefs_items[i].bottom_tittle, oled_data.prefs_index == i);
-            //     oled_write_P(PSTR("<"), oled_data.prefs_index == i);
-
-            //     if (prefs_items[i].value != NULL) {
-            //         sprintf(val, "%d", *prefs_items[i].value);
-            //         if (strlen(val) < 3) oled_write_P(PSTR(" "), oled_data.prefs_index == i);
-            //         oled_write_P(val, oled_data.prefs_index == i);
-            //         if (strlen(val) < 2) oled_write_P(PSTR("  "), oled_data.prefs_index == i);
-            //         if (strlen(val) < 3) oled_write_P(PSTR(" "), oled_data.prefs_index == i);
-            //     }
-            //     oled_write_P(PSTR(">"), oled_data.prefs_index == i);
-            // }
+            for (i = (oled_data.prefs_index / 4) * 4; i < (oled_data.prefs_index / 4) * 4 + 4; i++) {
+                if (i >= NUMBER_OF_PREFS_ITEMS) break;
+                oled_write_P(prefs_items[i].top_title, oled_data.prefs_index == i);
+                oled_write_P(prefs_items[i].bottom_title, oled_data.prefs_index == i);
+                oled_data.prefs_index == i ? oled_write_P(PSTR("\x2C"), false) : oled_advance_char();
+                if(*prefs_items[i].value >= 100) oled_write_char((char)(*prefs_items[i].value / 100),false);
+                else oled_write_char((char)0,false);
+                if(*prefs_items[i].value >= 10) oled_write_char((char)((*prefs_items[i].value / 10) % 10),false);
+                else oled_write_char((char)0,false);
+                oled_write_char((char)(*prefs_items[i].value % 10) ,false);
+                oled_data.prefs_index == i ? oled_write_P(PSTR("\x2A"), false) : oled_advance_char();
+            }
             break;
     }
     return false;
