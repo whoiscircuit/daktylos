@@ -237,14 +237,14 @@ static uint16_t my_boot_hold_timer = 0;
 static bool     jump_to_bootloader = false;
 
 struct MenuItem {
-    const char* icon;
-    const char* top_title;
-    const char* bottom_title;
+    const char *icon;
+    const char *top_title;
+    const char *bottom_title;
 };
 struct PrefsItem {
-    const char*      top_title;
-    const char*      bottom_tittle;
-    uint16_t *value;
+    const char *top_title;
+    const char *bottom_tittle;
+    uint16_t   *value;
 };
 
 static const struct MenuItem PROGMEM menu_items[] = {
@@ -429,7 +429,8 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 uint8_t i      = 0;
 uint8_t j      = 0;
 char    val[4] = "";
-bool    oled_task_user(void) {
+
+bool oled_task_user(void) {
     oled_clear();
     if (!is_keyboard_master()) return false;
     switch (oled_data.state) {
@@ -437,13 +438,12 @@ bool    oled_task_user(void) {
             break;
         case OLED_MENU:
             for (i = (oled_data.menu_index / 3) * 3; i < (oled_data.menu_index / 3) * 3 + 3; i++) {
-                if (i >= sizeof(menu_items) / sizeof(menu_items[0])) break;
+                if (i >= NUMBER_OF_MENU_ITEMS) break;
                 oled_write_P(menu_items[i].icon, oled_data.menu_index == i);
                 oled_write_P(menu_items[i].top_title, oled_data.menu_index == i);
-                if(menu_items[i].bottom_title != NULL){
+                if (menu_items[i].bottom_title != NULL) {
                     oled_write_P(menu_items[i].bottom_title, oled_data.menu_index == i);
-                }
-                else{
+                } else {
                     oled_write_P("\x26\x26\x26\x26\x26", oled_data.menu_index == i);
                 }
             }
