@@ -237,13 +237,13 @@ static uint16_t my_boot_hold_timer = 0;
 static bool     jump_to_bootloader = false;
 
 struct MenuItem {
-    char icon[16];
-    char top_title[6];
-    char bottom_title[6];
+    const char* icon;
+    const char* top_title;
+    const char* bottom_title;
 };
 struct PrefsItem {
-    char      top_title[6];
-    char      bottom_tittle[6];
+    const char*      top_title;
+    const char*      bottom_tittle;
     uint16_t *value;
 };
 
