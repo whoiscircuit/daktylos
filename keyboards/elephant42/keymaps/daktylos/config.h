@@ -14,6 +14,7 @@
 #define JOYSTICK_BUTTON_COUNT 32
 #undef OLED_FONT_H
 #define OLED_FONT_H "font.c"
+#define OLED_FONT_END 127
 #define OLED_BRIGHTNESS 64
 
 // OPTIMIZATIONS

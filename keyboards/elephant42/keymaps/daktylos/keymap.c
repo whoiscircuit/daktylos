@@ -1,4 +1,3 @@
-#include "quantum.h"
 #include QMK_KEYBOARD_H
 
 enum layer_names {
@@ -34,8 +33,8 @@ enum layer_names {
 #define MT_RALT_I MT(MOD_RALT, KC_I)
 #define MT_RGUI_O MT(MOD_RGUI, KC_O)
 
-static const uint8_t MOD_MASK_RIGHT = 0xF0;
-static const uint8_t MOD_MASK_LEFT  = 0x0F;
+static const uint8_t PROGMEM MOD_MASK_RIGHT = 0xF0;
+static const uint8_t PROGMEM MOD_MASK_LEFT  = 0x0F;
 
 enum custom_keycodes {
     MY_MENU = SAFE_RANGE,
@@ -249,12 +248,12 @@ struct PrefsItem {
 };
 
 static const struct MenuItem PROGMEM menu_items[] = {
-    [MENU_JOYSTICK] = {"\x85\x86\x87\x88\x89\xA5\xA6\xA7\xA8\xA9\xC5\xC6\xC7\xC8\xC9", " JOY ", "STICK"},
-    [MENU_PREFS]    = {"\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4", "PREFS", "     "},
-    [MENU_FLASH]    = {"\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3", "FLASH", "     "},
+    [MENU_JOYSTICK] = {"\x26\x27\x28\x29\x2A\x2B\x2C\x2D\x2E\x2F\x30\x31\x32\x33\x34", "\x26\x15\x1A\x24\x26", "\x1E\x1F\x14\x0E\x16"},
+    [MENU_PREFS]    = {"\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4", "\x1B\x1D\x10\x11\x1E", NULL},
+    [MENU_FLASH]    = {"\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3", "\x11\x17\x0C\x1E\x13", NULL},
 };
 
-static const struct PrefsItem PROGMEM prefs_items[] = {[PREFS_TAP_TERM] = {" TAP ", "TERM ", &g_tapping_term}};
+static const struct PrefsItem PROGMEM prefs_items[] = {[PREFS_TAP_TERM] = {"\x26\x1F\x0C\x1B\x26", "\x1F\x10\x1D\x18\x26", &g_tapping_term}};
 
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (get_mods() & MOD_MASK_RIGHT) {
@@ -441,7 +440,12 @@ bool    oled_task_user(void) {
                 if (i >= sizeof(menu_items) / sizeof(menu_items[0])) break;
                 oled_write_P(menu_items[i].icon, oled_data.menu_index == i);
                 oled_write_P(menu_items[i].top_title, oled_data.menu_index == i);
-                oled_write_P(menu_items[i].bottom_title, oled_data.menu_index == i);
+                if(menu_items[i].bottom_title != NULL){
+                    oled_write_P(menu_items[i].bottom_title, oled_data.menu_index == i);
+                }
+                else{
+                    oled_write_P("\x26\x26\x26\x26\x26", oled_data.menu_index == i);
+                }
             }
             break;
         case OLED_BOOTLOADER:
@@ -455,24 +459,23 @@ bool    oled_task_user(void) {
             oled_write_P(menu_items[MENU_JOYSTICK].icon, false);
             oled_write_P(menu_items[MENU_JOYSTICK].top_title, false);
             oled_write_P(menu_items[MENU_JOYSTICK].bottom_title, false);
-            oled_write_P(PSTR("MODE."), false);
             break;
         case OLED_PREFS:
-            for (i = (oled_data.prefs_index / 4) * 4; i < (oled_data.prefs_index / 4) * 4 + 4; i++) {
-                if (i >= sizeof(prefs_items) / sizeof(prefs_items[0])) break;
-                oled_write_P(prefs_items[i].top_title, oled_data.prefs_index == i);
-                oled_write_P(prefs_items[i].bottom_tittle, oled_data.prefs_index == i);
-                oled_write_P(PSTR("<"), oled_data.prefs_index == i);
+            // for (i = (oled_data.prefs_index / 4) * 4; i < (oled_data.prefs_index / 4) * 4 + 4; i++) {
+            //     if (i >= sizeof(prefs_items) / sizeof(prefs_items[0])) break;
+            //     oled_write_P(prefs_items[i].top_title, oled_data.prefs_index == i);
+            //     oled_write_P(prefs_items[i].bottom_tittle, oled_data.prefs_index == i);
+            //     oled_write_P(PSTR("<"), oled_data.prefs_index == i);
 
-                if (prefs_items[i].value != NULL) {
-                    sprintf(val, "%d", *prefs_items[i].value);
-                    if (strlen(val) < 3) oled_write_P(PSTR(" "), oled_data.prefs_index == i);
-                    oled_write_P(val, oled_data.prefs_index == i);
-                    if (strlen(val) < 2) oled_write_P(PSTR("  "), oled_data.prefs_index == i);
-                    if (strlen(val) < 3) oled_write_P(PSTR(" "), oled_data.prefs_index == i);
-                }
-                oled_write_P(PSTR(">"), oled_data.prefs_index == i);
-            }
+            //     if (prefs_items[i].value != NULL) {
+            //         sprintf(val, "%d", *prefs_items[i].value);
+            //         if (strlen(val) < 3) oled_write_P(PSTR(" "), oled_data.prefs_index == i);
+            //         oled_write_P(val, oled_data.prefs_index == i);
+            //         if (strlen(val) < 2) oled_write_P(PSTR("  "), oled_data.prefs_index == i);
+            //         if (strlen(val) < 3) oled_write_P(PSTR(" "), oled_data.prefs_index == i);
+            //     }
+            //     oled_write_P(PSTR(">"), oled_data.prefs_index == i);
+            // }
             break;
     }
     return false;
