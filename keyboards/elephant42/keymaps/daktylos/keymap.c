@@ -3,7 +3,6 @@
 enum layer_names {
     _COLEMAKDH,
     // _QWERTY,
-    // _GAMING,
     NUM,
     FUN,
     SYM,
@@ -192,7 +191,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
                                         JS_7     ,     JS_6     ,     JS_5     ,     JS_4     ,        JS_20    ,     JS_21    ,     JS_22   ,     JS_23
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
-  )
+  ),
 };
 // clang-format on
 
@@ -215,7 +214,6 @@ enum OLED_STATE {
     OLED_BOOTLOADER
 };
 enum OLED_MENU {
-    MENU_GAME_MODE,
     MENU_JOYSTICK,
     MENU_PREFS,
     MENU_FLASH
@@ -223,7 +221,7 @@ enum OLED_MENU {
 struct {
     unsigned state : 3;
     unsigned menu_index : 2;
-} oled_data = {OLED_OFF,MENU_GAME_MODE};
+} oled_data = {OLED_OFF,MENU_JOYSTICK};
 
 static uint16_t my_boot_timer = 0;
 static uint16_t my_boot_hold_timer = 0;
@@ -236,7 +234,6 @@ struct MenuItem {
 };
 
 static const struct MenuItem PROGMEM menu_items[] = {
-    [MENU_GAME_MODE] = {"\x8A\x8B\x8C\x8D\x8E\xAA\xAB\xAC\xAD\xAE\xCA\xCB\xCC\xCD\xCE"," GAME"," MODE"},
     [MENU_JOYSTICK] = {"\x85\x86\x87\x88\x89\xA5\xA6\xA7\xA8\xA9\xC5\xC6\xC7\xC8\xC9"," JOY ","STICK"},
     [MENU_PREFS] = {"\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4","PREFS","     "},
     [MENU_FLASH] = {"\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3","FLASH","     "},
@@ -340,8 +337,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case MY_SELECT:
             if(!record->event.pressed){
                 switch (oled_data.menu_index) {
-                    case MENU_GAME_MODE:
-                        break;
                     case MENU_JOYSTICK:
                         set_single_default_layer(_JOYSTICK);
                         oled_data.state = OLED_JOYSTICK;
