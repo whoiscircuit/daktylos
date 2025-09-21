@@ -1,3 +1,4 @@
+#include "quantum.h"
 #include QMK_KEYBOARD_H
 
 enum layer_names {
@@ -42,7 +43,7 @@ enum custom_keycodes {
     MY_DOWN,
     MY_LEFT,
     MY_RIGHT,
-    MY_SELECT
+    MY_SELECT,
 };
 
 #define GET_MOD_FROM_TAP_HOLD(tap_hold_keycode) (((tap_hold_keycode) & 0x0F00) >> 8)
@@ -150,11 +151,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_MENU] = LAYOUT(
   //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
-        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,KC_SCROLL_LOCK,   XXXXXXX    ,
+        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,    XXXXXXX   ,   XXXXXXX    ,
   //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
-        XXXXXXX    ,   XXXXXXX    ,   MY_LEFT    ,    MY_UP     ,   MY_DOWN    ,   MY_RIGHT   ,      MY_LEFT    ,   MY_DOWN    ,    MY_UP     ,   MY_RIGHT   , KC_CAPS_LOCK ,   XXXXXXX    ,
+        XXXXXXX    ,   XXXXXXX    ,   MY_LEFT    ,    MY_UP     ,   MY_DOWN    ,   MY_RIGHT   ,      MY_LEFT    ,   MY_DOWN    ,    MY_UP     ,   MY_RIGHT   ,    XXXXXXX   ,   XXXXXXX    ,
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
-                       XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,  KC_NUM_LOCK ,
+                       XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,    XXXXXXX   ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
                                       MY_MENU    ,   XXXXXXX    ,  MY_SELECT   ,   XXXXXXX    ,      XXXXXXX    ,  MY_SELECT   ,   XXXXXXX    ,   MY_MENU
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
@@ -211,47 +212,65 @@ enum OLED_STATE {
     OLED_MENU,
     OLED_PREFS,
     OLED_JOYSTICK,
-    OLED_BOOTLOADER
+    OLED_BOOTLOADER,
 };
 enum OLED_MENU {
     MENU_JOYSTICK,
     MENU_PREFS,
-    MENU_FLASH
+    MENU_FLASH,
+
+    NUMBER_OF_MENU_ITEMS,
 };
+enum OLED_PREFS {
+    PREFS_TAP_TERM,
+
+    NUMBER_OF_PREFS_ITEMS,
+};
+
 struct {
     unsigned state : 3;
     unsigned menu_index : 2;
-} oled_data = {OLED_OFF,MENU_JOYSTICK};
+    unsigned prefs_index : 2;
+} oled_data = {OLED_OFF, 0, 0};
 
-static uint16_t my_boot_timer = 0;
+static uint16_t my_boot_timer      = 0;
 static uint16_t my_boot_hold_timer = 0;
-static bool jump_to_bootloader = false;
+static bool     jump_to_bootloader = false;
 
 struct MenuItem {
     char icon[16];
     char top_title[6];
-    char bottom_tittle[6];
+    char bottom_title[6];
+};
+struct PrefsItem {
+    char      top_title[6];
+    char      bottom_tittle[6];
+    uint16_t *value;
 };
 
 static const struct MenuItem PROGMEM menu_items[] = {
-    [MENU_JOYSTICK] = {"\x85\x86\x87\x88\x89\xA5\xA6\xA7\xA8\xA9\xC5\xC6\xC7\xC8\xC9"," JOY ","STICK"},
-    [MENU_PREFS] = {"\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4","PREFS","     "},
-    [MENU_FLASH] = {"\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3","FLASH","     "},
+    [MENU_JOYSTICK] = {"\x85\x86\x87\x88\x89\xA5\xA6\xA7\xA8\xA9\xC5\xC6\xC7\xC8\xC9", " JOY ", "STICK"},
+    [MENU_PREFS]    = {"\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4", "PREFS", "     "},
+    [MENU_FLASH]    = {"\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3", "FLASH", "     "},
 };
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if(get_mods() & MOD_MASK_RIGHT){
+static const struct PrefsItem PROGMEM prefs_items[] = {[PREFS_TAP_TERM] = {" TAP ", "TERM ", &g_tapping_term}};
+
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (get_mods() & MOD_MASK_RIGHT) {
         layer_on(BLOCK_RIGHT);
-    }
-    else{
+    } else {
         layer_off(BLOCK_RIGHT);
     }
-    if(get_mods() & MOD_MASK_LEFT){
+
+    if (get_mods() & MOD_MASK_LEFT) {
         layer_on(BLOCK_LEFT);
-    }
-    else{
+    } else {
         layer_off(BLOCK_LEFT);
     }
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT_NUM_ENT:
         case LT_SYM_BSPC:
@@ -278,70 +297,88 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case MT_LSFT_T:
-            if(get_mods() & MOD_BIT(KC_RSFT)) break;
+            if (get_mods() & MOD_BIT(KC_RSFT)) break;
         case MT_LCTL_S:
         case MT_LALT_R:
         case MT_LGUI_A:
             if (record->event.pressed) {
-                if(get_mods() & MOD_MASK_RIGHT){
+                if (get_mods() & MOD_MASK_RIGHT) {
                     register_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
                     return false;
                 }
-            }
-            else{
+            } else {
                 unregister_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
                 return true;
             }
             break;
 
         case MT_RSFT_N:
-            if(get_mods() & MOD_BIT(KC_LSFT)) break;
+            if (get_mods() & MOD_BIT(KC_LSFT)) break;
         case MT_RCTL_E:
         case MT_RALT_I:
         case MT_RGUI_O:
             if (record->event.pressed) {
-                if(get_mods() & MOD_MASK_LEFT){
+                if (get_mods() & MOD_MASK_LEFT) {
                     register_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
                     return false;
                 }
-            }
-            else{
+            } else {
                 unregister_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
                 return true;
             }
             break;
         case MY_MENU:
-            if(!record->event.pressed){
-                if(oled_data.state == OLED_MENU){
-                    set_single_default_layer(_COLEMAKDH);
-                    oled_data.state = OLED_OFF;
-                }
-                else{
-                    set_single_default_layer(_MENU);
-                    oled_data.menu_index = 0;
-                    oled_data.state = OLED_MENU;
+            if (!record->event.pressed) {
+                switch (oled_data.state) {
+                    case OLED_MENU:
+                        set_single_default_layer(_COLEMAKDH);
+                        oled_data.state = OLED_OFF;
+                        break;
+                    case OLED_PREFS:
+                        set_single_default_layer(_MENU);
+                        oled_data.state = OLED_MENU;
+                        break;
+                    default:
+                        set_single_default_layer(_MENU);
+                        oled_data.menu_index = 0;
+                        oled_data.state      = OLED_MENU;
+                        break;
                 }
             }
             break;
         case MY_DOWN:
-            if(!record->event.pressed){
-                oled_data.menu_index = (oled_data.menu_index + 1) % (sizeof(menu_items)/sizeof(menu_items[0]));
+            if (!record->event.pressed) {
+                if (oled_data.state == OLED_MENU) {
+                    oled_data.menu_index = (oled_data.menu_index + 1) % NUMBER_OF_MENU_ITEMS;
+                } else if (oled_data.state == OLED_PREFS) {
+                    oled_data.prefs_index = (oled_data.prefs_index + 1) % NUMBER_OF_PREFS_ITEMS;
+                }
             }
             break;
         case MY_UP:
-            if(!record->event.pressed){
-                if(oled_data.menu_index == 0) oled_data.menu_index = (sizeof(menu_items)/sizeof(menu_items[0])) - 1;
-                else oled_data.menu_index = (oled_data.menu_index - 1) % (sizeof(menu_items)/sizeof(menu_items[0]));
+            if (!record->event.pressed) {
+                if (oled_data.state == OLED_MENU) {
+                    if (oled_data.menu_index == 0)
+                        oled_data.menu_index = NUMBER_OF_MENU_ITEMS - 1;
+                    else
+                        oled_data.menu_index = (oled_data.menu_index - 1) % NUMBER_OF_MENU_ITEMS;
+                } else if (oled_data.state == OLED_PREFS) {
+                    if (oled_data.prefs_index == 0)
+                        oled_data.prefs_index = NUMBER_OF_PREFS_ITEMS - 1;
+                    else
+                        oled_data.prefs_index = (oled_data.prefs_index - 1) % NUMBER_OF_PREFS_ITEMS;
+                }
             }
             break;
         case MY_SELECT:
-            if(!record->event.pressed){
+            if (!record->event.pressed) {
                 switch (oled_data.menu_index) {
                     case MENU_JOYSTICK:
                         set_single_default_layer(_JOYSTICK);
                         oled_data.state = OLED_JOYSTICK;
                         break;
                     case MENU_PREFS:
+                        set_single_default_layer(_MENU);
                         oled_data.state = OLED_PREFS;
                         break;
                 }
@@ -353,6 +390,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case MT_LGUI_A:
+        case MT_RGUI_O:
+            return g_tapping_term * 1.5;
         default:
             return g_tapping_term;
     }
@@ -384,61 +424,75 @@ uint8_t mod_config(uint8_t mod) {
 #endif
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-    return OLED_ROTATION_270;  // flips the display 180 degrees if offhand
+    return OLED_ROTATION_270; // flips the display 180 degrees if offhand
 }
 
-uint8_t i=0;
-uint8_t j=0;
-bool oled_task_user(void) {
+uint8_t i      = 0;
+uint8_t j      = 0;
+char    val[4] = "";
+bool    oled_task_user(void) {
     oled_clear();
-    if(!is_keyboard_master()) return false;
-    switch(oled_data.state){
+    if (!is_keyboard_master()) return false;
+    switch (oled_data.state) {
         case OLED_OFF:
             break;
         case OLED_MENU:
-            for(i = (oled_data.menu_index / 3) * 3;i<(oled_data.menu_index / 3) * 3 + 3;i++){
-                if(i>=sizeof(menu_items)/sizeof(menu_items[0])) break;
-                oled_write_P(menu_items[i].icon,oled_data.menu_index == i);
-                oled_write_P(menu_items[i].top_title,oled_data.menu_index == i);
-                oled_write_P(menu_items[i].bottom_tittle,oled_data.menu_index == i);
+            for (i = (oled_data.menu_index / 3) * 3; i < (oled_data.menu_index / 3) * 3 + 3; i++) {
+                if (i >= sizeof(menu_items) / sizeof(menu_items[0])) break;
+                oled_write_P(menu_items[i].icon, oled_data.menu_index == i);
+                oled_write_P(menu_items[i].top_title, oled_data.menu_index == i);
+                oled_write_P(menu_items[i].bottom_title, oled_data.menu_index == i);
             }
             break;
         case OLED_BOOTLOADER:
-            oled_set_cursor(0,4);
-            oled_write_P(menu_items[MENU_FLASH].icon,false);
+            oled_set_cursor(0, 4);
+            oled_write_P(menu_items[MENU_FLASH].icon, false);
             oled_advance_page(true);
-            oled_write_P(PSTR("FLASH"),false);
-            oled_write_P(PSTR(" NOW "),false);
+            oled_write_P(menu_items[MENU_FLASH].top_title, false);
             break;
         case OLED_JOYSTICK:
-            oled_set_cursor(0,4);
-            oled_write_P(menu_items[MENU_JOYSTICK].icon,false);
-            oled_write_P(menu_items[MENU_JOYSTICK].top_title,false);
-            oled_write_P(menu_items[MENU_JOYSTICK].bottom_tittle,false);
-            oled_write_P(PSTR("MODE."),false);
-        break;
+            oled_set_cursor(0, 4);
+            oled_write_P(menu_items[MENU_JOYSTICK].icon, false);
+            oled_write_P(menu_items[MENU_JOYSTICK].top_title, false);
+            oled_write_P(menu_items[MENU_JOYSTICK].bottom_title, false);
+            oled_write_P(PSTR("MODE."), false);
+            break;
+        case OLED_PREFS:
+            for (i = (oled_data.prefs_index / 4) * 4; i < (oled_data.prefs_index / 4) * 4 + 4; i++) {
+                if (i >= sizeof(prefs_items) / sizeof(prefs_items[0])) break;
+                oled_write_P(prefs_items[i].top_title, oled_data.prefs_index == i);
+                oled_write_P(prefs_items[i].bottom_tittle, oled_data.prefs_index == i);
+                oled_write_P(PSTR("<"), oled_data.prefs_index == i);
+
+                if (prefs_items[i].value != NULL) {
+                    sprintf(val, "%d", *prefs_items[i].value);
+                    if (strlen(val) < 3) oled_write_P(PSTR(" "), oled_data.prefs_index == i);
+                    oled_write_P(val, oled_data.prefs_index == i);
+                    if (strlen(val) < 2) oled_write_P(PSTR("  "), oled_data.prefs_index == i);
+                    if (strlen(val) < 3) oled_write_P(PSTR(" "), oled_data.prefs_index == i);
+                }
+                oled_write_P(PSTR(">"), oled_data.prefs_index == i);
+            }
+            break;
     }
     return false;
 }
 
-
-void matrix_scan_user(void){
-    if(jump_to_bootloader && timer_elapsed(my_boot_timer) > 200){
+void matrix_scan_user(void) {
+    if (jump_to_bootloader && timer_elapsed(my_boot_timer) > 200) {
         reset_keyboard();
     }
     // logic for restart and jumping to bootloader based on pressing the two thumb keys
-    if((matrix_is_on(7,5) && matrix_is_on(7,3)) || (matrix_is_on(3,3) && matrix_is_on(3,5))){
-        if(my_boot_hold_timer == 0){
+    if ((matrix_is_on(7, 5) && matrix_is_on(7, 3)) || (matrix_is_on(3, 3) && matrix_is_on(3, 5))) {
+        if (my_boot_hold_timer == 0) {
             my_boot_hold_timer = timer_read();
         }
-    }
-    else if(my_boot_hold_timer != 0){
-        if(timer_elapsed(my_boot_hold_timer) > g_tapping_term * 2){
-            oled_data.state = OLED_BOOTLOADER;
+    } else if (my_boot_hold_timer != 0) {
+        if (timer_elapsed(my_boot_hold_timer) > g_tapping_term * 2) {
+            oled_data.state    = OLED_BOOTLOADER;
             jump_to_bootloader = true;
-            my_boot_timer = timer_read();
-        }
-        else if(timer_elapsed(my_boot_hold_timer) > g_tapping_term / 2){
+            my_boot_timer      = timer_read();
+        } else if (timer_elapsed(my_boot_hold_timer) > g_tapping_term / 2) {
             soft_reset_keyboard();
         }
         my_boot_hold_timer = 0;
