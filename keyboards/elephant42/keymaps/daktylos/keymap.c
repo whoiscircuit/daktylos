@@ -237,23 +237,25 @@ static uint16_t my_boot_hold_timer = 0;
 static bool     jump_to_bootloader = false;
 
 struct MenuItem {
-    const char *icon;
-    const char *top_title;
-    const char *bottom_title;
+    const char icon[16];
+    const char top_title[6];
+    const char bottom_title[6];
 };
 struct PrefsItem {
-    const char *top_title;
-    const char *bottom_tittle;
-    uint16_t   *value;
+    const char top_title[6];
+    const char bottom_tittle[6];
+    uint16_t  *value;
 };
 
 static const struct MenuItem PROGMEM menu_items[] = {
-    [MENU_JOYSTICK] = {"\x26\x27\x28\x29\x2A\x2B\x2C\x2D\x2E\x2F\x30\x31\x32\x33\x34", "\x26\x15\x1A\x24\x26", "\x1E\x1F\x14\x0E\x16"},
-    [MENU_PREFS]    = {"\x80\x81\x82\x83\x84\xA0\xA1\xA2\xA3\xA4\xC0\xC1\xC2\xC3\xC4", "\x1B\x1D\x10\x11\x1E", NULL},
-    [MENU_FLASH]    = {"\x8F\x90\x91\x92\x93\xAF\xB0\xB1\xB2\xB3\xCF\xD0\xD1\xD2\xD3", "\x11\x17\x0C\x1E\x13", NULL},
+    [MENU_JOYSTICK] = {"\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F", "\x5F\x15\x1A\x24\x5F", "\x1E\x1F\x14\x0E\x16"},
+    [MENU_PREFS]    = {"\x5F\x26\x27\x28\x5F\x29\x2A\x2B\x2C\x2D\x5F\x2E\x2F\x30\x5F", "\x1B\x1D\x10\x11\x1E", "\x5F\x5F\x5F\x5F\x5F"},
+    [MENU_FLASH]    = {"\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E", "\x11\x17\x0C\x1E\x13", "\x5F\x5F\x5F\x5F\x5F"},
 };
 
-static const struct PrefsItem PROGMEM prefs_items[] = {[PREFS_TAP_TERM] = {"\x26\x1F\x0C\x1B\x26", "\x1F\x10\x1D\x18\x26", &g_tapping_term}};
+static const struct PrefsItem PROGMEM prefs_items[] = {
+    [PREFS_TAP_TERM] = {"\x5F\x1F\x0C\x1B\x5F", "\x1F\x10\x1D\x18\x5F", &g_tapping_term},
+};
 
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (get_mods() & MOD_MASK_RIGHT) {
@@ -441,11 +443,7 @@ bool oled_task_user(void) {
                 if (i >= NUMBER_OF_MENU_ITEMS) break;
                 oled_write_P(menu_items[i].icon, oled_data.menu_index == i);
                 oled_write_P(menu_items[i].top_title, oled_data.menu_index == i);
-                if (menu_items[i].bottom_title != NULL) {
-                    oled_write_P(menu_items[i].bottom_title, oled_data.menu_index == i);
-                } else {
-                    oled_write_P("\x26\x26\x26\x26\x26", oled_data.menu_index == i);
-                }
+                oled_write_P(menu_items[i].bottom_title, oled_data.menu_index == i);
             }
             break;
         case OLED_BOOTLOADER:
