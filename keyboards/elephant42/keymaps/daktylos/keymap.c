@@ -1,4 +1,3 @@
-#include "oled_driver.h"
 #include QMK_KEYBOARD_H
 
 enum layer_names {
@@ -245,8 +244,26 @@ struct MenuItem {
 struct PrefsItem {
     const char top_title[6];
     const char bottom_title[6];
-    uint16_t  *value;
+    uint8_t  *value;
 };
+
+typedef union {
+  uint32_t raw;
+  struct {
+    uint8_t  tap_term;
+  };
+} user_config_t;
+
+user_config_t user_config;
+
+void keyboard_post_init_user() {
+  user_config.raw = eeconfig_read_user();
+  g_tapping_term = user_config.tap_term;
+}
+
+void eeconfig_init_user(){
+    user_config.tap_term = g_tapping_term;
+}
 
 static const struct MenuItem PROGMEM menu_items[] = {
     [MENU_JOYSTICK] = {"\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F", "\x5F\x15\x1A\x24\x5F", "\x1E\x1F\x14\x0E\x16"},
@@ -255,7 +272,7 @@ static const struct MenuItem PROGMEM menu_items[] = {
 };
 
 static const struct PrefsItem PROGMEM prefs_items[] = {
-    [PREFS_TAP_TERM] = {"\x5F\x1F\x0C\x1B\x5F", "\x1F\x10\x1D\x18\x5F", &g_tapping_term},
+    [PREFS_TAP_TERM] = {"\x5F\x1F\x0C\x1B\x5F", "\x1F\x10\x1D\x18\x5F", &user_config.tap_term},
 };
 
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -372,6 +389,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         oled_data.prefs_index = (oled_data.prefs_index - 1) % NUMBER_OF_PREFS_ITEMS;
                 }
             }
+            break;
+        case MY_LEFT:
+            if(record->event.pressed || oled_data.state != OLED_PREFS) return false;
+            *prefs_items[oled_data.prefs_index].value -= 5;
+            eeconfig_update_user(user_config.raw);
+            keyboard_post_init_user();
+            break;
+        case MY_RIGHT:
+            if(record->event.pressed || oled_data.state != OLED_PREFS) return false;
+            *prefs_items[oled_data.prefs_index].value += 5;
+            eeconfig_update_user(user_config.raw);
+            keyboard_post_init_user();
             break;
         case MY_SELECT:
             if (!record->event.pressed) {
