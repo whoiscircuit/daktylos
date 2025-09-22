@@ -7,13 +7,14 @@
 #define KEYBOARD_PID 0x0721
 #define MAX_STR 255
 
+#define RAW_USAGE_PAGE 0xFF60
+#define RAW_USAGE_ID 0x69
+
 
 typedef union {
     uint32_t raw;
     struct {
-        uint8_t report_type; // must always be 0x00
-        uint8_t os_type :2;
-        uint8_t keyboard_layout :3;
+        uint8_t first_byte;
     };
 } HIDReport;
 
@@ -22,6 +23,10 @@ int main() {
     int res;
     hid_device *device;
     wchar_t wstr[MAX_STR];
+    unsigned char buf[5] = {0,0,0,0,0};
+    HIDReport report;
+    report.raw = buf[1];
+    report.first_byte = 1;
 
     res = hid_init();
     if(res == -1){
@@ -30,6 +35,7 @@ int main() {
     }
 
     device = hid_open(KEYBOARD_VID,KEYBOARD_PID,NULL);
+    // TODO: enumerate devices and filter based on USAGE_PAGE and USAGE_ID
 
     if(!device){
         printf("Unable to open device! quitting.\n");
@@ -47,21 +53,7 @@ int main() {
 	res = hid_get_product_string(device, wstr, MAX_STR);
 	printf("Product String: %ls\n", wstr);
 
-	// Read the Serial Number String
-	res = hid_get_serial_number_string(device, wstr, MAX_STR);
-	printf("Serial Number String: (%d) %ls\n", wstr[0], wstr);
-
-	// Read Indexed String 1
-	res = hid_get_indexed_string(device, 1, wstr, MAX_STR);
-	printf("Indexed String 1: %ls\n", wstr);
-
-    HIDReport report = {
-        .report_type = 0x00,
-        .os_type = 0x01,
-        .keyboard_layout = 0x01
-    };
-
-    res = hid_write(device,(const unsigned char*)&report,4);
+    res = hid_write(device,(const unsigned char*)&report,5);
     if(res == -1){
         printf("Failed to send HID Report to the keyboard. quitting\n");
         return -1;
