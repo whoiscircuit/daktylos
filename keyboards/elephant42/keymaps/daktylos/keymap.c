@@ -431,6 +431,12 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case MT_LGUI_A:
         case MT_RGUI_O:
             return g_tapping_term * 1.5;
+        case MT_RCTL_E:
+        case MT_LCTL_S:
+            return g_tapping_term * 0.8;
+        case MT_RSFT_N:
+        case MT_LSFT_T:
+            return g_tapping_term * 0.7;
         default:
             return g_tapping_term;
     }
