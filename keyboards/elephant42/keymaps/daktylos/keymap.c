@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include "transactions.h"
 
 enum layer_names {
     _COLEMAKDH,
@@ -33,8 +34,8 @@ enum layer_names {
 #define MT_RALT_I MT(MOD_RALT, KC_I)
 #define MT_RGUI_O MT(MOD_RGUI, KC_O)
 
-static const uint8_t PROGMEM MOD_MASK_RIGHT = 0xF0;
-static const uint8_t PROGMEM MOD_MASK_LEFT  = 0x0F;
+#define MOD_MASK_RIGHT (0xF0)
+#define MOD_MASK_LEFT (0x0F)
 
 enum custom_keycodes {
     MY_MENU = SAFE_RANGE,
@@ -232,10 +233,6 @@ struct {
     unsigned prefs_index : 2;
 } oled_data = {OLED_OFF, 0, 0};
 
-static uint16_t my_boot_timer      = 0;
-static uint16_t my_boot_hold_timer = 0;
-static bool     jump_to_bootloader = false;
-
 struct MenuItem {
     const char icon[16];
     const char top_title[6];
@@ -244,32 +241,31 @@ struct MenuItem {
 struct PrefsItem {
     const char top_title[6];
     const char bottom_title[6];
-    uint8_t  *value;
+    uint8_t   *value;
 };
 
 typedef union {
-  uint32_t raw;
-  struct {
-    uint8_t  tap_term;
-  };
+    uint32_t raw;
+    struct {
+        uint8_t tap_term;
+    };
 } user_config_t;
 
 user_config_t user_config;
 
-void keyboard_post_init_user() {
-  user_config.raw = eeconfig_read_user();
-  g_tapping_term = user_config.tap_term;
+void user_sync_slave_handler(uint8_t in_buflen, const void *sync_data, uint8_t out_buflen, void *out_data) {
+    user_config.raw = *(uint32_t *)sync_data;
 }
 
-void eeconfig_init_user(){
+void keyboard_post_init_user() {
+    user_config.raw = eeconfig_read_user();
+    g_tapping_term  = user_config.tap_term;
+    transaction_register_rpc(USER_SYNC, user_sync_slave_handler);
+}
+
+void eeconfig_init_user() {
     user_config.tap_term = g_tapping_term;
 }
-
-static const struct MenuItem PROGMEM menu_items[] = {
-    [MENU_JOYSTICK] = {"\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F", "\x5F\x15\x1A\x24\x5F", "\x1E\x1F\x14\x0E\x16"},
-    [MENU_PREFS]    = {"\x5F\x26\x27\x28\x5F\x29\x2A\x2B\x2C\x2D\x5F\x2E\x2F\x30\x5F", "\x1B\x1D\x10\x11\x1E", "\x5F\x5F\x5F\x5F\x5F"},
-    [MENU_FLASH]    = {"\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E", "\x11\x17\x0C\x1E\x13", "\x5F\x5F\x5F\x5F\x5F"},
-};
 
 static const struct PrefsItem PROGMEM prefs_items[] = {
     [PREFS_TAP_TERM] = {"\x5F\x1F\x0C\x1B\x5F", "\x1F\x10\x1D\x18\x5F", &user_config.tap_term},
@@ -356,7 +352,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     case OLED_PREFS:
                         set_single_default_layer(_MENU);
                         oled_data.prefs_index = 0;
-                        oled_data.state = OLED_MENU;
+                        oled_data.state       = OLED_MENU;
                         break;
                     default:
                         set_single_default_layer(_MENU);
@@ -391,13 +387,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case MY_LEFT:
-            if(record->event.pressed || oled_data.state != OLED_PREFS) return false;
+            if (record->event.pressed || oled_data.state != OLED_PREFS) return false;
             *prefs_items[oled_data.prefs_index].value -= 5;
             eeconfig_update_user(user_config.raw);
             keyboard_post_init_user();
             break;
         case MY_RIGHT:
-            if(record->event.pressed || oled_data.state != OLED_PREFS) return false;
+            if (record->event.pressed || oled_data.state != OLED_PREFS) return false;
             *prefs_items[oled_data.prefs_index].value += 5;
             eeconfig_update_user(user_config.raw);
             keyboard_post_init_user();
@@ -411,7 +407,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         break;
                     case MENU_PREFS:
                         set_single_default_layer(_MENU);
-                        oled_data.state = OLED_PREFS;
+                        oled_data.state       = OLED_PREFS;
                         oled_data.prefs_index = 0;
                         break;
                 }
@@ -460,9 +456,13 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_270; // flips the display 180 degrees if offhand
 }
 
-static uint8_t i      = 0;
-
 bool oled_task_user(void) {
+    static uint8_t i = 0;
+    static const struct MenuItem PROGMEM menu_items[] = {
+        [MENU_JOYSTICK] = {"\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F", "\x5F\x15\x1A\x24\x5F", "\x1E\x1F\x14\x0E\x16"},
+        [MENU_PREFS]    = {"\x5F\x26\x27\x28\x5F\x29\x2A\x2B\x2C\x2D\x5F\x2E\x2F\x30\x5F", "\x1B\x1D\x10\x11\x1E", "\x5F\x5F\x5F\x5F\x5F"},
+        [MENU_FLASH]    = {"\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E", "\x11\x17\x0C\x1E\x13", "\x5F\x5F\x5F\x5F\x5F"},
+    };
     oled_clear();
     if (!is_keyboard_master()) return false;
     switch (oled_data.state) {
@@ -494,11 +494,15 @@ bool oled_task_user(void) {
                 oled_write_P(prefs_items[i].top_title, oled_data.prefs_index == i);
                 oled_write_P(prefs_items[i].bottom_title, oled_data.prefs_index == i);
                 oled_data.prefs_index == i ? oled_write_P(PSTR("\x2C"), false) : oled_advance_char();
-                if(*prefs_items[i].value >= 100) oled_write_char((char)(*prefs_items[i].value / 100),false);
-                else oled_write_char((char)0,false);
-                if(*prefs_items[i].value >= 10) oled_write_char((char)((*prefs_items[i].value / 10) % 10),false);
-                else oled_write_char((char)0,false);
-                oled_write_char((char)(*prefs_items[i].value % 10) ,false);
+                if (*prefs_items[i].value >= 100)
+                    oled_write_char((char)(*prefs_items[i].value / 100), false);
+                else
+                    oled_write_char((char)0, false);
+                if (*prefs_items[i].value >= 10)
+                    oled_write_char((char)((*prefs_items[i].value / 10) % 10), false);
+                else
+                    oled_write_char((char)0, false);
+                oled_write_char((char)(*prefs_items[i].value % 10), false);
                 oled_data.prefs_index == i ? oled_write_P(PSTR("\x2A"), false) : oled_advance_char();
             }
             break;
@@ -507,6 +511,10 @@ bool oled_task_user(void) {
 }
 
 void matrix_scan_user(void) {
+    static uint16_t my_boot_timer      = 0;
+    static uint16_t my_boot_hold_timer = 0;
+    static bool     jump_to_bootloader = false;
+
     if (jump_to_bootloader && timer_elapsed(my_boot_timer) > 200) {
         reset_keyboard();
     }
@@ -524,5 +532,17 @@ void matrix_scan_user(void) {
             soft_reset_keyboard();
         }
         my_boot_hold_timer = 0;
+    }
+}
+
+void housekeeping_task_user(void) {
+    if (is_keyboard_master()) {
+        // Interact with slave every 500ms
+        static uint16_t last_sync = 0;
+        if (timer_elapsed(last_sync) > 500) {
+            if (transaction_rpc_send(USER_SYNC, sizeof(user_config.raw), &user_config.raw)) {
+                last_sync = timer_read();
+            }
+        }
     }
 }
