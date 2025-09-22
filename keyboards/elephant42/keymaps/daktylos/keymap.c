@@ -549,3 +549,19 @@ void matrix_scan_user(void) {
         my_boot_hold_timer = 0;
     }
 }
+
+static union {
+    uint32_t raw;
+    struct {
+        uint8_t first_byte;
+    };
+} hid_report;
+
+
+void raw_hid_receive(uint8_t *data, uint8_t length){
+    hid_report.raw = *(uint32_t*)data;
+    oled_data.state = OLED_JOYSTICK;
+    if(hid_report.first_byte == 1){
+
+    }
+}

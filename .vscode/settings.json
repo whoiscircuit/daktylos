@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/home/user/Projects/daktylos/hid"
+    "cmake.sourceDirectory": "/home/user/Projects/daktylos/hid",
+    "cmake.ignoreCMakeListsMissing": true
 }

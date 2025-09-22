@@ -5,6 +5,7 @@ DYNAMIC_TAPPING_TERM_ENABLE = yes
 OLED_ENABLE = yes
 JOYSTICK_ENABLE = yes
 RAW_ENABLE = yes
+
 # optimizations
 LTO_ENABLE = yes
 BACKLIGHT_ENABLE = no
