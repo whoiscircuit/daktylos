@@ -253,15 +253,24 @@ typedef union {
 
 user_config_t user_config;
 
+
+void setup_config(void){
+    g_tapping_term  = user_config.tap_term;
+    if(is_keyboard_master()) transaction_rpc_send(USER_SYNC, sizeof(user_config.raw), &user_config.raw);
+}
+
 void user_sync_slave_handler(uint8_t in_buflen, const void *sync_data, uint8_t out_buflen, void *out_data) {
     user_config.raw = *(uint32_t *)sync_data;
+    eeconfig_update_user(user_config.raw);
+    setup_config();
 }
 
 void keyboard_post_init_user() {
     user_config.raw = eeconfig_read_user();
-    g_tapping_term  = user_config.tap_term;
+    setup_config();
     transaction_register_rpc(USER_SYNC, user_sync_slave_handler);
 }
+
 
 void eeconfig_init_user() {
     user_config.tap_term = TAPPING_TERM;
@@ -391,13 +400,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed || oled_data.state != OLED_PREFS) return false;
             *prefs_items[oled_data.prefs_index].value = (*prefs_items[oled_data.prefs_index].value / 5 * 5) - 5;
             eeconfig_update_user(user_config.raw);
-            keyboard_post_init_user();
+            setup_config();
             break;
         case MY_RIGHT:
             if (record->event.pressed || oled_data.state != OLED_PREFS) return false;
             *prefs_items[oled_data.prefs_index].value = (*prefs_items[oled_data.prefs_index].value / 5 * 5) + 5;
             eeconfig_update_user(user_config.raw);
-            keyboard_post_init_user();
+            setup_config();
             break;
         case MY_SELECT:
             if (!record->event.pressed) {
@@ -533,17 +542,5 @@ void matrix_scan_user(void) {
             soft_reset_keyboard();
         }
         my_boot_hold_timer = 0;
-    }
-}
-
-void housekeeping_task_user(void) {
-    if (is_keyboard_master()) {
-        // Interact with slave every 500ms
-        static uint16_t last_sync = 0;
-        if (timer_elapsed(last_sync) > 500) {
-            if (transaction_rpc_send(USER_SYNC, sizeof(user_config.raw), &user_config.raw)) {
-                last_sync = timer_read();
-            }
-        }
     }
 }
