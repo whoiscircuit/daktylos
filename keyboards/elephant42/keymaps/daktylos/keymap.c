@@ -253,7 +253,6 @@ typedef union {
 
 user_config_t user_config;
 
-
 void setup_config(void){
     g_tapping_term  = user_config.tap_term;
     if(is_keyboard_master()) transaction_rpc_send(USER_SYNC, sizeof(user_config.raw), &user_config.raw);

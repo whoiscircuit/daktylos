@@ -1,6 +1,0 @@
-[submodule "hid/lib/hidapi"]
-	path = hid/lib/hidapi
-	url = https://github.com/libusb/hidapi.git
-[submodule "hid/lib/libusb"]
-	path = hid/lib/libusb
-	url = https://github.com/libusb/libusb.git
