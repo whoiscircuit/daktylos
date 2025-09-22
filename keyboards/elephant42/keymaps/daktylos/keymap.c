@@ -264,7 +264,7 @@ void keyboard_post_init_user() {
 }
 
 void eeconfig_init_user() {
-    user_config.tap_term = g_tapping_term;
+    user_config.tap_term = TAPPING_TERM;
 }
 
 static const struct PrefsItem PROGMEM prefs_items[] = {
@@ -389,13 +389,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case MY_LEFT:
             if (record->event.pressed || oled_data.state != OLED_PREFS) return false;
-            *prefs_items[oled_data.prefs_index].value -= 5;
+            *prefs_items[oled_data.prefs_index].value = (*prefs_items[oled_data.prefs_index].value / 5 * 5) - 5;
             eeconfig_update_user(user_config.raw);
             keyboard_post_init_user();
             break;
         case MY_RIGHT:
             if (record->event.pressed || oled_data.state != OLED_PREFS) return false;
-            *prefs_items[oled_data.prefs_index].value += 5;
+            *prefs_items[oled_data.prefs_index].value = (*prefs_items[oled_data.prefs_index].value / 5 * 5) + 5;
             eeconfig_update_user(user_config.raw);
             keyboard_post_init_user();
             break;
