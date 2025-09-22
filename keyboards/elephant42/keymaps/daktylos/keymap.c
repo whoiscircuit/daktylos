@@ -288,30 +288,30 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT_NUM_ENT:
-        case LT_SYM_BSPC:
-        case LT_FUN_DEL:
-            if (get_mods() & MOD_MASK_RIGHT) {
-                if (record->event.pressed) {
-                    layer_on(GET_LAYER_FROM_TAP_HOLD(keycode));
-                } else {
-                    layer_off(GET_LAYER_FROM_TAP_HOLD(keycode));
-                }
-                return false;
-            }
-            break;
-        case LT_NAV_SPC:
-        case LT_MOS_TAB:
-        case LT_MED_ESC:
-            if (get_mods() & MOD_MASK_LEFT) {
-                if (record->event.pressed) {
-                    layer_on(GET_LAYER_FROM_TAP_HOLD(keycode));
-                } else {
-                    layer_off(GET_LAYER_FROM_TAP_HOLD(keycode));
-                }
-                return false;
-            }
-            break;
+        // case LT_NUM_ENT:
+        // case LT_SYM_BSPC:
+        // case LT_FUN_DEL:
+        //     if (get_mods() & MOD_MASK_RIGHT) {
+        //         if (record->event.pressed) {
+        //             layer_on(GET_LAYER_FROM_TAP_HOLD(keycode));
+        //         } else {
+        //             layer_off(GET_LAYER_FROM_TAP_HOLD(keycode));
+        //         }
+        //         return false;
+        //     }
+        //     break;
+        // case LT_NAV_SPC:
+        // case LT_MOS_TAB:
+        // case LT_MED_ESC:
+        //     if (get_mods() & MOD_MASK_LEFT) {
+        //         if (record->event.pressed) {
+        //             layer_on(GET_LAYER_FROM_TAP_HOLD(keycode));
+        //         } else {
+        //             layer_off(GET_LAYER_FROM_TAP_HOLD(keycode));
+        //         }
+        //         return false;
+        //     }
+        //     break;
         case MT_LSFT_T:
             if (get_mods() & MOD_BIT(KC_RSFT)) break;
         case MT_LCTL_S:
