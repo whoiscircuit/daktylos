@@ -271,7 +271,7 @@ static const struct PrefsItem PROGMEM prefs_items[] = {
     [PREFS_TAP_TERM] = {"\x5F\x1F\x0C\x1B\x5F", "\x1F\x10\x1D\x18\x5F", &user_config.tap_term},
 };
 
-void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (get_mods() & MOD_MASK_RIGHT) {
         layer_on(BLOCK_RIGHT);
     } else {
@@ -283,6 +283,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     } else {
         layer_off(BLOCK_LEFT);
     }
+    return true;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
