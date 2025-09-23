@@ -14,22 +14,31 @@
 
 
 typedef union {
-    uint32_t raw;
+    unsigned char buf[REPORT_SIZE + 1];
     struct {
-        uint8_t first_byte;
+        uint8_t report_id; // should always be 0x00
+        uint8_t os_type :2;
     };
 } HIDReport;
 
+uint8_t get_os_type(){
+#ifdef _WIN32
+    return 0x01;
+#elif __APPLE__
+    return 0x02;
+#elif __linux__
+    return 0x03;
+#else
+    return 0x00;
+#endif
+}
 
 int main() {
     int res;
     hid_device *device;
     wchar_t wstr[MAX_STR];
-    unsigned char buf[REPORT_SIZE + 1];
-    memset(buf,0,REPORT_SIZE + 1);
     HIDReport report;
-    report.raw = buf[1];
-    report.first_byte = 1;
+    memset(report.buf,0,REPORT_SIZE + 1);
 
     res = hid_init();
     if(res == -1){
@@ -62,7 +71,10 @@ int main() {
 	res = hid_get_product_string(device, wstr, MAX_STR);
 	printf("Product String: %ls\n", wstr);
 
-    res = hid_write(device,(const unsigned char*)&report,5);
+
+    // TODO: keep seding the hid_report in an interval untill forever
+    report.os_type = get_os_type();
+    res = hid_write(device,report.buf,REPORT_SIZE);
     if(res == -1){
         printf("Failed to send HID Report to the keyboard. quitting\n");
         return -1;
