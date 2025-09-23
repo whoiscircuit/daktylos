@@ -254,21 +254,44 @@ typedef union {
 
 user_config_t user_config;
 
-void setup_config(void){
-    g_tapping_term  = user_config.tap_term;
-    if(is_keyboard_master()) transaction_rpc_send(USER_SYNC, sizeof(user_config.raw), &user_config.raw);
+
+static union {
+    uint32_t raw;
+    struct {
+        uint8_t os_type :2;
+    };
+} hid_report;
+
+
+void raw_hid_receive(uint8_t *data, uint8_t length){
+    hid_report.raw = *(uint32_t*)data;
+    if(hid_report.os_type == 0x03){
+        oled_data.state = OLED_JOYSTICK;
+    }
+    transaction_rpc_send(HID_REPORT_SYNC, sizeof(hid_report), &hid_report.raw);
 }
 
-void user_sync_slave_handler(uint8_t in_buflen, const void *sync_data, uint8_t out_buflen, void *out_data) {
+
+void setup_config(void){
+    g_tapping_term  = user_config.tap_term;
+    if(is_keyboard_master()) transaction_rpc_send(USER_CONFIG_SYNC, sizeof(user_config.raw), &user_config.raw);
+}
+
+void user_config_sync_slave_handler(uint8_t in_buflen, const void *sync_data, uint8_t out_buflen, void *out_data) {
     user_config.raw = *(uint32_t *)sync_data;
     eeconfig_update_user(user_config.raw);
     setup_config();
 }
 
+void hid_report_sync_slave_handler(uint8_t in_buflen, const void *sync_data, uint8_t out_buflen, void *out_data) {
+    hid_report.raw = *(uint32_t *)sync_data;
+}
+
 void keyboard_post_init_user() {
     user_config.raw = eeconfig_read_user();
     setup_config();
-    transaction_register_rpc(USER_SYNC, user_sync_slave_handler);
+    transaction_register_rpc(USER_CONFIG_SYNC, user_config_sync_slave_handler);
+    transaction_register_rpc(HID_REPORT_SYNC, hid_report_sync_slave_handler);
 }
 
 
@@ -549,17 +572,4 @@ void matrix_scan_user(void) {
         }
         my_boot_hold_timer = 0;
     }
-}
-
-static union {
-    uint32_t raw;
-    struct {
-        uint8_t first_byte;
-    };
-} hid_report;
-
-
-void raw_hid_receive(uint8_t *data, uint8_t length){
-    hid_report.raw = *(uint32_t*)data;
-    oled_data.state = OLED_JOYSTICK;
 }
