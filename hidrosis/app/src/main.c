@@ -1,14 +1,16 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <hidapi.h>
+#include <string.h>
 #include <wchar.h>
 
 #define KEYBOARD_VID 0x4649
 #define KEYBOARD_PID 0x0721
 #define MAX_STR 255
 
-#define RAW_USAGE_PAGE 0xFF60
+#define RAW_USAGE_PAGE 0xFF69
 #define RAW_USAGE_ID 0x69
+#define REPORT_SIZE 32
 
 
 typedef union {
@@ -23,7 +25,8 @@ int main() {
     int res;
     hid_device *device;
     wchar_t wstr[MAX_STR];
-    unsigned char buf[5] = {0,0,0,0,0};
+    unsigned char buf[REPORT_SIZE + 1];
+    memset(buf,0,REPORT_SIZE + 1);
     HIDReport report;
     report.raw = buf[1];
     report.first_byte = 1;
@@ -34,8 +37,14 @@ int main() {
         return 1;
     }
 
-    device = hid_open(KEYBOARD_VID,KEYBOARD_PID,NULL);
-    // TODO: enumerate devices and filter based on USAGE_PAGE and USAGE_ID
+    struct hid_device_info* cur_device = hid_enumerate(KEYBOARD_VID,KEYBOARD_PID);
+    while(cur_device != NULL){
+        if(cur_device->usage_page == RAW_USAGE_PAGE && cur_device->usage == RAW_USAGE_ID){
+            device = hid_open_path(cur_device->path);
+            break;
+        }
+        cur_device = cur_device->next;
+    }
 
     if(!device){
         printf("Unable to open device! quitting.\n");

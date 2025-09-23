@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include "raw_hid.h"
 #include "transactions.h"
 
 enum layer_names {
@@ -561,7 +562,4 @@ static union {
 void raw_hid_receive(uint8_t *data, uint8_t length){
     hid_report.raw = *(uint32_t*)data;
     oled_data.state = OLED_JOYSTICK;
-    if(hid_report.first_byte == 1){
-
-    }
 }
