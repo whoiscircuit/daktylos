@@ -4,6 +4,7 @@
 #include "transactions.h"
 
 enum layer_names {
+    _FARSI,
     _COLEMAKDH,
     NUM,
     FUN,
@@ -194,6 +195,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                         JS_7     ,     JS_6     ,     JS_5     ,     JS_4     ,        JS_20    ,     JS_21    ,     JS_22   ,     JS_23
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
+  [_FARSI] = LAYOUT(
+  //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
+        XXXXXXX    ,     KC_Q     ,     KC_W     ,     KC_E     ,     KC_R     ,     KC_T     ,        KC_Y     ,     KC_U     ,     KC_I     ,     KC_O     ,     KC_P     ,   XXXXXXX    ,
+  //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
+        XXXXXXX    ,     KC_A     ,     KC_S     ,     KC_D     ,     KC_F     ,     KC_G     ,        KC_H     ,     KC_J     ,     KC_K     ,     KC_L     ,   KC_SCLN    ,   XXXXXXX    ,
+  //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
+                         KC_Z     ,     KC_X     ,     KC_C     ,     KC_V     ,     KC_B     ,        KC_N     ,     KC_M     ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
+  //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
+                                      XXXXXXX    ,   XXXXXXX    ,    KC_SPC    ,   XXXXXXX    ,      XXXXXXX    ,    KC_BSPC   ,   XXXXXXX    ,   XXXXXXX
+  //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
+  )
 };
 // clang-format on
 
@@ -202,10 +214,11 @@ const key_override_t override_shift_slash_is_back_slash       = ko_make_basic(MO
 const key_override_t override_swap_minus_and_underscore       = ko_make_basic(MOD_MASK_SHIFT, KC_UNDS, KC_MINUS);
 const key_override_t override_shift_comma_is_left_parenthesis = ko_make_basic(MOD_MASK_SHIFT, KC_COMM, KC_LPRN);
 const key_override_t override_shift_dot_is_right_parenthesis  = ko_make_basic(MOD_MASK_SHIFT, KC_DOT, KC_RPRN);
+const key_override_t override_persian_shift_kaf_is_gaf        = ko_make_with_layers(MOD_MASK_SHIFT, KC_SCLN, KC_QUOT, 1 << _FARSI);
 
 // This globally defines all key overrides to be used
 const key_override_t *key_overrides[] = {
-    &override_swap_qoute_and_double_qoute, &override_shift_slash_is_back_slash, &override_swap_minus_and_underscore, &override_shift_dot_is_right_parenthesis, &override_shift_comma_is_left_parenthesis,
+    &override_swap_qoute_and_double_qoute, &override_shift_slash_is_back_slash, &override_swap_minus_and_underscore, &override_shift_dot_is_right_parenthesis, &override_shift_comma_is_left_parenthesis, &override_persian_shift_kaf_is_gaf,
 };
 
 enum OLED_MODE {
@@ -415,7 +428,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case MY_LEFT:
             if (record->event.pressed || state.oled.mode != OLED_PREFS) return false;
-            if(state.oled.prefs_index == PREFS_TAP_TERM){
+            if (state.oled.prefs_index == PREFS_TAP_TERM) {
                 user_config.tap_term = (user_config.tap_term / 5 * 5) - 5;
             }
 
@@ -546,8 +559,8 @@ bool oled_task_user(void) {
             break;
         case OLED_PREFS:
             if (is_keyboard_master()) {
-                oled_write_P("\x5F\x1F\x0C\x1B\x5F",state.oled.prefs_index == i);
-                oled_write_P("\x1F\x10\x1D\x18\x5F",state.oled.prefs_index == i);
+                oled_write_P("\x5F\x1F\x0C\x1B\x5F", state.oled.prefs_index == i);
+                oled_write_P("\x1F\x10\x1D\x18\x5F", state.oled.prefs_index == i);
                 state.oled.prefs_index == i ? oled_write_P(PSTR("\x2C"), false) : oled_advance_char();
                 user_config.tap_term >= 100 ? oled_write_char((user_config.tap_term / 100), false) : oled_write_char(0, false);
                 user_config.tap_term >= 10 ? oled_write_char((user_config.tap_term / 10) % 10, false) : oled_write_char(0, false);
