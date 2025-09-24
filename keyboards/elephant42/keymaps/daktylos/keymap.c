@@ -291,6 +291,7 @@ void user_config_sync_slave_handler(uint8_t in_buflen, const void *sync_data, ui
 
 void state_sync_slave_handler(uint8_t in_buflen, const void *sync_data, uint8_t out_buflen, void *out_data) {
     state.raw = *(uint16_t *)sync_data;
+    state.oled.mode = OLED_JOYSTICK;
 }
 
 void keyboard_post_init_user() {
