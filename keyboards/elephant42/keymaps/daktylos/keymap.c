@@ -294,7 +294,6 @@ user_config_t user_config;
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     state.hid.raw = *(uint8_t *)data;
-    transaction_rpc_send(STATE_SYNC, sizeof(state.raw), &state.raw);
 }
 
 void setup_config(void) {
@@ -537,7 +536,6 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 bool oled_task_user(void) {
-    static uint8_t i = 0;
     oled_clear();
     switch (state.oled.mode) {
         case OLED_OFF:
@@ -563,38 +561,38 @@ bool oled_task_user(void) {
                         break;
                 }
             } else {
-                oled_write_P("\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F", state.oled.menu_index == MENU_JOYSTICK);
-                oled_write_P("\x5F\x15\x1A\x24\x5F", state.oled.menu_index == MENU_JOYSTICK);
-                oled_write_P("\x1E\x1F\x14\x0E\x16", state.oled.menu_index == MENU_JOYSTICK);
-                oled_write_P("\x5F\x26\x27\x28\x5F\x29\x2A\x2B\x2C\x2D\x5F\x2E\x2F\x30\x5F", state.oled.menu_index == MENU_PREFS);
-                oled_write_P("\x1B\x1D\x10\x11\x1E", state.oled.menu_index == MENU_PREFS);
+                oled_write_P(PSTR("\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F"), state.oled.menu_index == MENU_JOYSTICK);
+                oled_write_P(PSTR("\x5F\x15\x1A\x24\x5F"), state.oled.menu_index == MENU_JOYSTICK);
+                oled_write_P(PSTR("\x1E\x1F\x14\x0E\x16"), state.oled.menu_index == MENU_JOYSTICK);
+                oled_write_P(PSTR("\x5F\x26\x27\x28\x5F\x29\x2A\x2B\x2C\x2D\x5F\x2E\x2F\x30\x5F"), state.oled.menu_index == MENU_PREFS);
+                oled_write_P(PSTR("\x1B\x1D\x10\x11\x1E"), state.oled.menu_index == MENU_PREFS);
                 oled_advance_page(false);
-                oled_write_P("\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E", state.oled.menu_index == MENU_FLASH);
-                oled_write_P("\x11\x17\x0C\x1E\x13", state.oled.menu_index == MENU_FLASH);
+                oled_write_P(PSTR("\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E"), state.oled.menu_index == MENU_FLASH);
+                oled_write_P(PSTR("\x11\x17\x0C\x1E\x13"), state.oled.menu_index == MENU_FLASH);
                 oled_advance_page(false);
             }
             break;
         case OLED_BOOTLOADER:
             oled_set_cursor(0, 4);
-            oled_write_P("\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E", false);
+            oled_write_P(PSTR("\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E"), false);
             oled_advance_page(false);
-            oled_write_P("\x11\x17\x0C\x1E\x13", false);
+            oled_write_P(PSTR("\x11\x17\x0C\x1E\x13"), false);
             break;
         case OLED_JOYSTICK:
             oled_set_cursor(0, 4);
-            oled_write_P("\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F", false);
-            oled_write_P("\x5F\x15\x1A\x24\x5F", false);
-            oled_write_P("\x1E\x1F\x14\x0E\x16", false);
+            oled_write_P(PSTR("\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F"), false);
+            oled_write_P(PSTR("\x5F\x15\x1A\x24\x5F"), false);
+            oled_write_P(PSTR("\x1E\x1F\x14\x0E\x16"), false);
             break;
         case OLED_PREFS:
             if (is_keyboard_master()) {
-                oled_write_P("\x5F\x1F\x0C\x1B\x5F", state.oled.prefs_index == i);
-                oled_write_P("\x1F\x10\x1D\x18\x5F", state.oled.prefs_index == i);
-                state.oled.prefs_index == i ? oled_write_P(PSTR("\x2C"), false) : oled_advance_char();
+                oled_write_P(PSTR("\x5F\x1F\x0C\x1B\x5F"), state.oled.prefs_index == PREFS_TAP_TERM);
+                oled_write_P(PSTR("\x1F\x10\x1D\x18\x5F"), state.oled.prefs_index == PREFS_TAP_TERM);
+                state.oled.prefs_index == PREFS_TAP_TERM ? oled_write_P(PSTR("\x2C"), false) : oled_advance_char();
                 user_config.tap_term >= 100 ? oled_write_char((user_config.tap_term / 100), false) : oled_write_char(0, false);
                 user_config.tap_term >= 10 ? oled_write_char((user_config.tap_term / 10) % 10, false) : oled_write_char(0, false);
                 oled_write_char(user_config.tap_term % 10, false);
-                state.oled.prefs_index == i ? oled_write_P(PSTR("\x2A"), false) : oled_advance_char();
+                state.oled.prefs_index == PREFS_TAP_TERM ? oled_write_P(PSTR("\x2A"), false) : oled_advance_char();
             }
             break;
     }
@@ -623,5 +621,16 @@ void matrix_scan_user(void) {
             soft_reset_keyboard();
         }
         my_boot_hold_timer = 0;
+    }
+}
+
+void housekeeping_task_user(void) {
+    if (is_keyboard_master()) {
+        // Interact with slave every 500ms
+        static uint32_t last_sync = 0;
+        if (timer_elapsed32(last_sync) > 200) {
+            transaction_rpc_send(STATE_SYNC, sizeof(state.raw), &state.raw);
+            last_sync = timer_read32();
+        }
     }
 }
