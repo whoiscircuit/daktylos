@@ -1,3 +1,4 @@
+#include "keycodes.h"
 #include "quantum.h"
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
@@ -35,6 +36,16 @@ enum layer_names {
 #define MT_RCTL_E MT(MOD_RCTL, KC_E)
 #define MT_RALT_I MT(MOD_RALT, KC_I)
 #define MT_RGUI_O MT(MOD_RGUI, KC_O)
+
+// for farsi
+#define MT_LALT_S MT(MOD_LALT, KC_S)
+#define MT_LCTL_D MT(MOD_LCTL, KC_D)
+#define MT_LSFT_F MT(MOD_LSFT, KC_F)
+
+#define MT_RSFT_J MT(MOD_RSFT, KC_J)
+#define MT_RCTL_K MT(MOD_RCTL, KC_K)
+#define MT_RALT_L MT(MOD_RALT, KC_L)
+#define MT_RGUI_SCLN MT(MOD_RGUI, KC_SCLN)
 
 #define MOD_MASK_RIGHT (0xF0)
 #define MOD_MASK_LEFT (0x0F)
@@ -81,6 +92,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_SLSH    ,   MT_LGUI_A  ,   MT_LALT_R  ,   MT_LCTL_S  ,   MT_LSFT_T  ,     KC_G     ,        KC_M     ,   MT_RSFT_N  ,   MT_RCTL_E  ,   MT_RALT_I  ,   MT_RGUI_O  ,   KC_EQUAL   ,
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                          KC_Z     ,     KC_X     ,     KC_C     ,     KC_D     ,     KC_V     ,        KC_K     ,     KC_H     ,    KC_COMM   ,    KC_DOT    ,   KC_SCLN    ,
+  //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
+                                      MY_MENU    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,   MY_MENU
+  //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
+  ),
+  [_FARSI] = LAYOUT(
+  //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
+         KC_GRV    ,     KC_Q     ,     KC_W     ,     KC_E     ,     KC_R     ,     KC_T     ,        KC_Y     ,     KC_U     ,     KC_I     ,     KC_O     ,     KC_P     ,   KC_UNDS    ,
+  //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
+        KC_SLSH    ,   MT_LGUI_A  ,   MT_LALT_S  ,   MT_LCTL_D  ,   MT_LSFT_F  ,     KC_G     ,        KC_H     ,   MT_RSFT_J  ,   MT_RCTL_K  ,   MT_RALT_L  , MT_RGUI_SCLN ,   KC_EQUAL   ,
+  //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
+                         KC_Z     ,     KC_X     ,     KC_C     ,     KC_V     ,     KC_B     ,        KC_N     ,     KC_M     ,   KC_COMM    ,    KC_DOT    ,   KC_QUOTE   ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
                                       MY_MENU    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,   MY_MENU
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
@@ -194,17 +216,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
                                         JS_7     ,     JS_6     ,     JS_5     ,     JS_4     ,        JS_20    ,     JS_21    ,     JS_22   ,     JS_23
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
-  ),
-  [_FARSI] = LAYOUT(
-  //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
-        XXXXXXX    ,     KC_Q     ,     KC_W     ,     KC_E     ,     KC_R     ,     KC_T     ,        KC_Y     ,     KC_U     ,     KC_I     ,     KC_O     ,     KC_P     ,   XXXXXXX    ,
-  //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
-        XXXXXXX    ,     KC_A     ,     KC_S     ,     KC_D     ,     KC_F     ,     KC_G     ,        KC_H     ,     KC_J     ,     KC_K     ,     KC_L     ,   KC_SCLN    ,   XXXXXXX    ,
-  //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
-                         KC_Z     ,     KC_X     ,     KC_C     ,     KC_V     ,     KC_B     ,        KC_N     ,     KC_M     ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
-  //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                      XXXXXXX    ,   XXXXXXX    ,    KC_SPC    ,   XXXXXXX    ,      XXXXXXX    ,    KC_BSPC   ,   XXXXXXX    ,   XXXXXXX
-  //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   )
 };
 // clang-format on
@@ -215,10 +226,12 @@ const key_override_t override_swap_minus_and_underscore       = ko_make_basic(MO
 const key_override_t override_shift_comma_is_left_parenthesis = ko_make_basic(MOD_MASK_SHIFT, KC_COMM, KC_LPRN);
 const key_override_t override_shift_dot_is_right_parenthesis  = ko_make_basic(MOD_MASK_SHIFT, KC_DOT, KC_RPRN);
 const key_override_t override_persian_shift_kaf_is_gaf        = ko_make_with_layers(MOD_MASK_SHIFT, KC_SCLN, KC_QUOT, 1 << _FARSI);
+const key_override_t override_persian_shift_khe_is_jim        = ko_make_with_layers(MOD_MASK_SHIFT, KC_O, KC_LBRC, 1 << _FARSI);
+const key_override_t override_persian_shift_he_is_che         = ko_make_with_layers(MOD_MASK_SHIFT, KC_P, KC_RBRC, 1 << _FARSI);
 
 // This globally defines all key overrides to be used
 const key_override_t *key_overrides[] = {
-    &override_swap_qoute_and_double_qoute, &override_shift_slash_is_back_slash, &override_swap_minus_and_underscore, &override_shift_dot_is_right_parenthesis, &override_shift_comma_is_left_parenthesis, &override_persian_shift_kaf_is_gaf,
+    &override_swap_qoute_and_double_qoute, &override_shift_slash_is_back_slash, &override_swap_minus_and_underscore, &override_shift_dot_is_right_parenthesis, &override_shift_comma_is_left_parenthesis, &override_persian_shift_kaf_is_gaf, &override_persian_shift_he_is_che, &override_persian_shift_khe_is_jim,
 };
 
 enum OLED_MODE {
@@ -352,10 +365,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case MT_LSFT_T:
+        case MT_LSFT_F:
             if (get_mods() & MOD_BIT(KC_RSFT)) break;
         case MT_LCTL_S:
         case MT_LALT_R:
         case MT_LGUI_A:
+        case MT_LCTL_D:
+        case MT_LALT_S:
             if (record->event.pressed) {
                 if (get_mods() & MOD_MASK_RIGHT) {
                     register_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
@@ -368,10 +384,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
 
         case MT_RSFT_N:
+        case MT_RSFT_J:
             if (get_mods() & MOD_BIT(KC_LSFT)) break;
         case MT_RCTL_E:
         case MT_RALT_I:
         case MT_RGUI_O:
+        case MT_RCTL_K:
+        case MT_RALT_L:
+        case MT_RGUI_SCLN:
             if (record->event.pressed) {
                 if (get_mods() & MOD_MASK_LEFT) {
                     register_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
@@ -464,12 +484,17 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case MT_LGUI_A:
         case MT_RGUI_O:
+        case MT_RGUI_SCLN:
             return g_tapping_term * 1.5;
         case MT_RCTL_E:
         case MT_LCTL_S:
+        case MT_RCTL_K:
+        case MT_LCTL_D:
             return g_tapping_term * 0.8;
         case MT_RSFT_N:
         case MT_LSFT_T:
+        case MT_RSFT_J:
+        case MT_LSFT_F:
             return g_tapping_term * 0.7;
         default:
             return g_tapping_term;
@@ -482,6 +507,10 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
         case MT_LCTL_S:
         case MT_RSFT_N:
         case MT_LSFT_T:
+        case MT_RCTL_K:
+        case MT_LCTL_D:
+        case MT_RSFT_J:
+        case MT_LSFT_F:
             return 0;
         case LT_NAV_SPC:
         case LT_SYM_BSPC:
