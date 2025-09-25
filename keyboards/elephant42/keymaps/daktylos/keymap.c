@@ -1,3 +1,4 @@
+#include "action_layer.h"
 #include "keycodes.h"
 #include "quantum.h"
 #include QMK_KEYBOARD_H
@@ -5,8 +6,8 @@
 #include "transactions.h"
 
 enum layer_names {
-    _FARSI,
     _COLEMAKDH,
+    _FARSI,
     NUM,
     FUN,
     SYM,
@@ -261,6 +262,11 @@ enum OS_TYPES {
     OS_LINUX   = 3,
 };
 
+enum LAYOUT_LANGUAGE {
+    LAYOUT_ENGLISH = 0,
+    LAYOUT_FARSI = 1,
+};
+
 typedef union {
     uint16_t raw;
     struct {
@@ -276,6 +282,7 @@ typedef union {
             uint8_t raw;
             struct {
                 unsigned os_type : 2;
+                unsigned active_layout :2;
             };
         } hid;
     };
@@ -352,6 +359,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case LT_NAV_SPC:
+            if(!record->event.pressed && state.hid.os_type == OS_UNKNOWN && get_mods() & MOD_BIT(KC_RGUI)){
+                if(state.hid.active_layout == LAYOUT_ENGLISH){
+                    state.hid.active_layout = LAYOUT_FARSI;
+                    set_single_default_layer(_FARSI);
+                }
+                else{
+                    state.hid.active_layout = LAYOUT_ENGLISH;
+                    set_single_default_layer(_COLEMAKDH);
+                }
+            }
         case LT_MOS_TAB:
         case LT_MED_ESC:
             if (get_mods() & MOD_MASK_LEFT) {
