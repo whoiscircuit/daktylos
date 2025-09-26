@@ -1,6 +1,3 @@
-#include "action_layer.h"
-#include "keycodes.h"
-#include "quantum.h"
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
 #include "transactions.h"
@@ -262,7 +259,7 @@ enum OS_TYPES {
     OS_LINUX   = 3,
 };
 
-enum LAYOUT_LANGUAGE {
+enum KEYBOARD_LAYOUT {
     LAYOUT_ENGLISH = 0,
     LAYOUT_FARSI = 1,
 };
@@ -362,11 +359,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if(!record->event.pressed && state.hid.os_type == OS_UNKNOWN && get_mods() & MOD_BIT(KC_RGUI)){
                 if(state.hid.active_layout == LAYOUT_ENGLISH){
                     state.hid.active_layout = LAYOUT_FARSI;
-                    set_single_default_layer(_FARSI);
                 }
                 else{
                     state.hid.active_layout = LAYOUT_ENGLISH;
-                    set_single_default_layer(_COLEMAKDH);
                 }
             }
         case LT_MOS_TAB:
@@ -577,6 +572,15 @@ bool oled_task_user(void) {
                         oled_write_P(PSTR("\x5D\x5E\x0B\x0B\x0B"), false);
                         break;
                 }
+                oled_advance_page(false);
+                switch (state.hid.active_layout) {
+                    case LAYOUT_ENGLISH:
+                        oled_write_P(PSTR("\x5F\x10\x19\x12\x5F"),false);
+                        break;
+                    case LAYOUT_FARSI:
+                        oled_write_P(PSTR("\x5F\x11\x0C\x1D\x5F"),false);
+                        break;
+                }
             } else {
                 oled_write_P(PSTR("\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F"), state.oled.menu_index == MENU_JOYSTICK);
                 oled_write_P(PSTR("\x5F\x15\x1A\x24\x5F"), state.oled.menu_index == MENU_JOYSTICK);
@@ -649,5 +653,6 @@ void housekeeping_task_user(void) {
             transaction_rpc_send(STATE_SYNC, sizeof(state.raw), &state.raw);
             last_sync = timer_read32();
         }
+        set_single_default_layer(state.hid.active_layout);
     }
 }
