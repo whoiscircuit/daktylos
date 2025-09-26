@@ -16,7 +16,10 @@ option(USE_X11 "Enable X11 keyboard layout support" ${DEFAULT_USE_X11})
 
 include_directories(${PROJECT_NAME} "include/")
 
-add_executable(${PROJECT_NAME} "src/main.c" "src/layout/linux.c")
+add_executable(${PROJECT_NAME}
+    "src/main.c"
+    "src/layout/linux.c" "src/layout/macos.c" "src/layout/windows.c" "src/layout/util.c"
+)
 target_link_libraries(${PROJECT_NAME} PRIVATE hidapi::hidapi)
 
 if(USE_X11)
@@ -31,4 +34,8 @@ if(USE_X11)
     target_include_directories(${PROJECT_NAME} PRIVATE ${X11_INCLUDE_DIR})
 
     target_compile_definitions(${PROJECT_NAME} PRIVATE USE_X11)
+endif()
+
+if(APPLE)
+    target_link_libraries(${PROJECT_NAME} PRIVATE "-framework Carbon")
 endif()

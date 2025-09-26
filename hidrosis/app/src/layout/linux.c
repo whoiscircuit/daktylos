@@ -1,4 +1,3 @@
-#include <ctype.h>
 #ifdef __linux__
 #include <stdio.h>
 #include <string.h>
@@ -6,14 +5,6 @@
 #include <X11/extensions/XKBrules.h>
 #include <X11/extensions/XKBstr.h>
 #include "layout.h"
-
-static void tolowercase(char* str){
-    char* letter = str;
-    while(*letter != '\0'){
-        *letter = tolower(*letter);
-        letter += 1;
-    }
-}
 
 int get_keyboard_layout(){
     Display *dpy = XOpenDisplay(NULL);
@@ -47,16 +38,7 @@ int get_keyboard_layout(){
         return -1;
     }
 
-    int result;
-    tolowercase(layout);
-    if(strstr(layout,"persian") || strstr(layout,"farsi")){
-        printf("Active keyboard layout is Farsi.\n");
-        result = LAYOUT_FARSI;
-    }
-    else {
-        printf("Active keyboard layout is English.\n");
-        result = LAYOUT_ENGLISH;
-    }
+    int result = get_layout_id_from_string(layout);
 
 
     XFree(layout);

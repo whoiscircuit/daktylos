@@ -6,3 +6,4 @@ enum KEYBOARD_LAYOUT {
 };
 
 int get_keyboard_layout();
+int get_layout_id_from_string(char* str);
