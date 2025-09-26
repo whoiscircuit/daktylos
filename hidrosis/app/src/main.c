@@ -3,6 +3,7 @@
 #include <hidapi.h>
 #include <string.h>
 #include <wchar.h>
+#include "layout.h"
 
 #define KEYBOARD_VID 0x4649
 #define KEYBOARD_PID 0x0721
@@ -17,7 +18,8 @@ typedef union {
     unsigned char buf[REPORT_SIZE + 1];
     struct {
         uint8_t report_id; // should always be 0x00
-        uint8_t os_type :2;
+        unsigned os_type :2;
+        unsigned active_layout :2;
     };
 } HIDReport;
 
@@ -72,13 +74,22 @@ int main() {
 	printf("Product String: %ls\n", wstr);
 
 
-    // TODO: keep seding the hid_report in an interval untill forever
+    // TODO: keep seding the hid in an interval untill forever
     report.os_type = get_os_type();
+    res = get_keyboard_layout();
+    if(res == -1){
+        printf("Failed to get the active keyboard layout!\n");
+    }
+    else {
+        report.active_layout = res;
+    }
+
     res = hid_write(device,report.buf,REPORT_SIZE);
     if(res == -1){
         printf("Failed to send HID Report to the keyboard. quitting\n");
         return -1;
     }
+
 
     hid_close(device);
     res = hid_exit();
