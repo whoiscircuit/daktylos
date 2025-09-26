@@ -4,6 +4,11 @@
 #include <string.h>
 #include <wchar.h>
 #include "layout.h"
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 #define KEYBOARD_VID 0x4649
 #define KEYBOARD_PID 0x0721
@@ -74,22 +79,28 @@ int main() {
 	printf("Product String: %ls\n", wstr);
 
 
-    // TODO: keep seding the hid in an interval untill forever
     report.os_type = get_os_type();
-    res = get_keyboard_layout();
-    if(res == -1){
-        printf("Failed to get the active keyboard layout!\n");
-    }
-    else {
-        report.active_layout = res;
-    }
 
-    res = hid_write(device,report.buf,REPORT_SIZE);
-    if(res == -1){
-        printf("Failed to send HID Report to the keyboard. quitting\n");
-        return -1;
-    }
+    for(;;){
+        res = get_keyboard_layout();
+        if(res == -1){
+            printf("Failed to get the active keyboard layout!\n");
+        }
+        else {
+            report.active_layout = res;
+        }
 
+        res = hid_write(device,report.buf,REPORT_SIZE);
+        if(res == -1){
+            printf("Failed to send HID Report to the keyboard. quitting\n");
+            return -1;
+        }
+#ifdef _WIN32
+        Sleep(1000);
+#else
+        sleep(1);
+#endif
+    }
 
     hid_close(device);
     res = hid_exit();
