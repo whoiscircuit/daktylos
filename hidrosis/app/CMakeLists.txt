@@ -39,3 +39,8 @@ endif()
 if(APPLE)
     target_link_libraries(${PROJECT_NAME} PRIVATE "-framework Carbon")
 endif()
+
+if(WIN32)
+    # Win32 APIs are part of user32.dll
+    target_link_libraries(${PROJECT_NAME} user32)
+endif()
