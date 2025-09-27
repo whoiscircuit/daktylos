@@ -1,9 +1,11 @@
 #pragma once
 
-enum KEYBOARD_LAYOUT {
+typedef enum {
     LAYOUT_ENGLISH = 0,
     LAYOUT_FARSI = 1,
-};
+    LAYOUT_UNKNOWN = -1
+} keyboard_layout_t;
 
-int get_keyboard_layout();
-int get_layout_id_from_string(char* str);
+keyboard_layout_t get_keyboard_layout();
+keyboard_layout_t get_layout_from_string(char* str);
+const char* layout_to_string(keyboard_layout_t layout);

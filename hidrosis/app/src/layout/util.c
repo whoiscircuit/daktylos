@@ -1,5 +1,4 @@
 #include <ctype.h>
-#include <stdio.h>
 #include <string.h>
 #include "layout.h"
 
@@ -11,14 +10,23 @@ static void tolowercase(char* str){
     }
 }
 
-int get_layout_id_from_string(char* str){
+int get_layout_from_string(char* str){
     tolowercase(str);
     if(strstr(str,"persian") || strstr(str,"farsi")){
-        printf("Active keyboard layout is Farsi.\n");
         return LAYOUT_FARSI;
     }
     else {
-        printf("Active keyboard layout is English.\n");
         return LAYOUT_ENGLISH;
+    }
+}
+
+const char* layout_to_string(keyboard_layout_t layout){
+    switch(layout){
+        case LAYOUT_ENGLISH:
+            return "English";
+        case LAYOUT_FARSI:
+            return "Farsi";
+        default:
+            return "Unknown";
     }
 }

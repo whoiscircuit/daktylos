@@ -9,36 +9,31 @@
 int get_keyboard_layout() {
     Display *dpy = XOpenDisplay(NULL);
     if (!dpy) {
-        fprintf(stderr, "Failed to open display\n");
         return -1;
     }
 
     int         device_id = XkbUseCoreKbd;
     XkbDescRec *kbd       = XkbAllocKeyboard();
     if (!kbd) {
-        fprintf(stderr, "Failed to alloc keyboard\n");
         return -1;
     }
 
     kbd->dpy = dpy;
     if (XkbGetNames(dpy, XkbGroupNamesMask, kbd) != Success) {
-        fprintf(stderr, "XkbGetNames failed\n");
         return -1;
     }
 
     XkbStateRec state;
     if (XkbGetState(dpy, device_id, &state) != Success) {
-        fprintf(stderr, "XkbGetState failed\n");
         return -1;
     }
 
     char *layout = XGetAtomName(dpy, kbd->names->groups[state.group]);
     if (!layout) {
-        printf("Failed to get the name of the active layout.");
         return -1;
     }
 
-    int result = get_layout_id_from_string(layout);
+    keyboard_layout_t result = get_layout_from_string(layout);
 
     XFree(layout);
 

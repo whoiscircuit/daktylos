@@ -8,7 +8,6 @@ int get_keyboard_layout() {
     // Layout ID as string
     char name[KL_NAMELENGTH];
     if (!GetKeyboardLayoutNameA(name)) {
-        printf("Failed to get keyboard layout\n");
         return -1;
     }
 
