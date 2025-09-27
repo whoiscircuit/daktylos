@@ -19,6 +19,9 @@ include_directories(${PROJECT_NAME} "include/")
 add_executable(${PROJECT_NAME}
     "src/main.c"
     "src/layout/linux.c" "src/layout/macos.c" "src/layout/windows.c" "src/layout/util.c"
+    "src/log/unix.c" "src/log/log.c" "src/log/util.c" "src/log/windows.c"
+    "src/os_type.c"
+    "src/util.c"
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE hidapi::hidapi)
 

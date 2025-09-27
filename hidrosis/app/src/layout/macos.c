@@ -1,8 +1,8 @@
 #ifdef __APPLE__
-#include <Carbon/Carbon.h>
-#include <stdio.h>
-#include "layout.h"
-int get_keyboard_layout(){
+#    include <Carbon/Carbon.h>
+#    include <stdio.h>
+#    include "layout.h"
+int get_keyboard_layout() {
     TISInputSourceRef source = TISCopyCurrentKeyboardInputSource();
     if (!source) {
         printf("Failed to get keyboard source\n");

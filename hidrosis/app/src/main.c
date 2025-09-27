@@ -4,11 +4,9 @@
 #include <string.h>
 #include <wchar.h>
 #include "layout.h"
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
+#include "os_type.h"
+#include "util.h"
+#include "log.h"
 
 #define KEYBOARD_VID 0x4649
 #define KEYBOARD_PID 0x0721
@@ -23,24 +21,15 @@ typedef union {
     unsigned char buf[REPORT_SIZE + 1];
     struct {
         uint8_t report_id; // should always be 0x00
-        unsigned os_type :2;
+        os_type_t os_type :2;
         unsigned active_layout :2;
     };
 } HIDReport;
 
-uint8_t get_os_type(){
-#ifdef _WIN32
-    return 0x01;
-#elif __APPLE__
-    return 0x02;
-#elif __linux__
-    return 0x03;
-#else
-    return 0x00;
-#endif
-}
-
 int main() {
+    log_init("hidrosis");
+    LOG_INFO("starting hidrosis service...");
+
     int res;
     hid_device *device;
     wchar_t wstr[MAX_STR];
@@ -95,11 +84,7 @@ int main() {
             printf("Failed to send HID Report to the keyboard. quitting\n");
             return -1;
         }
-#ifdef _WIN32
-        Sleep(1000);
-#else
-        sleep(1);
-#endif
+        sleep_for_seconds(1);
     }
 
     hid_close(device);

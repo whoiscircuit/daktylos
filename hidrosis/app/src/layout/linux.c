@@ -1,20 +1,20 @@
 #ifdef __linux__
-#include <stdio.h>
-#include <string.h>
-#include <X11/XKBlib.h>
-#include <X11/extensions/XKBrules.h>
-#include <X11/extensions/XKBstr.h>
-#include "layout.h"
+#    include <stdio.h>
+#    include <string.h>
+#    include <X11/XKBlib.h>
+#    include <X11/extensions/XKBrules.h>
+#    include <X11/extensions/XKBstr.h>
+#    include "layout.h"
 
-int get_keyboard_layout(){
+int get_keyboard_layout() {
     Display *dpy = XOpenDisplay(NULL);
     if (!dpy) {
         fprintf(stderr, "Failed to open display\n");
         return -1;
     }
 
-    int device_id = XkbUseCoreKbd;
-    XkbDescRec *kbd = XkbAllocKeyboard();
+    int         device_id = XkbUseCoreKbd;
+    XkbDescRec *kbd       = XkbAllocKeyboard();
     if (!kbd) {
         fprintf(stderr, "Failed to alloc keyboard\n");
         return -1;
@@ -39,7 +39,6 @@ int get_keyboard_layout(){
     }
 
     int result = get_layout_id_from_string(layout);
-
 
     XFree(layout);
 
