@@ -49,12 +49,17 @@ int main() {
     res = hid_init();
     if (res == -1) {
         LOG_FATAL("Failed to initialize hidapi library! quitting.\n");
+        const wchar_t *err = hid_error(NULL);
+        LOG_ERROR("Error: %ls", err);
         return 1;
     }
 
     // wait for the keyboard to be connected
     LOG_INFO("waiting for keyboard to be connected...");
     device = wait_for_device(KEYBOARD_VID, KEYBOARD_PID, RAW_USAGE_PAGE, RAW_USAGE_ID);
+    if(device == NULL){
+        return 1;
+    }
 
     // Read the Manufacturer String
     hid_get_manufacturer_string(device, wstr, MAX_STR);
@@ -101,6 +106,9 @@ int main() {
                     LOG_WARN("keyboard disconnected, waiting for it to be reconnected...");
                     hid_close(device);
                     device = wait_for_device(KEYBOARD_VID, KEYBOARD_PID, RAW_USAGE_PAGE, RAW_USAGE_ID);
+                    if(device == NULL){
+                        break;
+                    }
                     LOG_INFO("keyboard reconnected. continuing...");
                 }
             }
