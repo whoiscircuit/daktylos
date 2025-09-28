@@ -1,4 +1,8 @@
 #include "util.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "hidapi.h"
+#include "log.h"
 #ifdef _WIN32
 #    include <windows.h>
 #else
@@ -13,11 +17,9 @@ void sleep_for_ms(unsigned int ms) {
 #endif
 }
 
-
 int check_signal(sigset_t *set) {
     sigset_t pending;
-    if (sigpending(&pending) == -1)
-        return -1;
+    if (sigpending(&pending) == -1) return -1;
 
     for (int sig = 1; sig < NSIG; sig++) {
         if (sigismember(set, sig) && sigismember(&pending, sig)) {
@@ -25,4 +27,45 @@ int check_signal(sigset_t *set) {
         }
     }
     return 0;
+}
+
+void find_device_path(unsigned short vendor_id, unsigned short product_id, unsigned short usage_page, unsigned short usage_id,char* result) {
+    struct hid_device_info *cur_device   = hid_enumerate(vendor_id, product_id);
+    struct hid_device_info *first_device = cur_device;
+    while (cur_device != NULL) {
+        LOG_TRACE("checking device: path=%s, vid=0x%04hx, pid=0x%04hx, serial_number=%ls, release_number=0x%hx, manufacturer_string=%ls, product_string=%ls, usage_page=0x%hx, usage=0x%hx", cur_device->path, cur_device->vendor_id, cur_device->product_id, cur_device->serial_number, cur_device->release_number, cur_device->manufacturer_string, cur_device->product_string, cur_device->usage_page, cur_device->usage);
+
+        if (cur_device->usage_page == usage_page && cur_device->usage == usage_id) {
+            LOG_INFO("keyboard found, connecting...");
+            LOG_DEBUG("opening device at path %s", cur_device->path);
+            snprintf(result, 256, "%s", cur_device->path);
+        }
+        cur_device = cur_device->next;
+    }
+    hid_free_enumeration(first_device);
+}
+
+hid_device *open_device(char* path) {
+    hid_device *device = hid_open_path(path);
+    if (device == NULL) {
+        LOG_ERROR("failed to open the device at path %s", path);
+    } else {
+        LOG_INFO("connected to the keyboard successfully.");
+    }
+    return device;
+}
+
+hid_device *wait_for_device(unsigned short vendor_id, unsigned short product_id, unsigned short usage_page, unsigned short usage_id) {
+    hid_device *device = NULL;
+    char path[256] = {0};
+    while (device == NULL) {
+        find_device_path(vendor_id, product_id, usage_page, usage_id, path);
+        if (path[0] != '\0') {
+            device = open_device(path);
+        }
+        if (device == NULL) {
+            sleep_for_ms(1000);
+        }
+    }
+    return device;
 }

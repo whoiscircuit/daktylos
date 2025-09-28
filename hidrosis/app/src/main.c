@@ -54,46 +54,14 @@ int main() {
 
     // wait for the keyboard to be connected
     LOG_INFO("waiting for keyboard to be connected...");
-    while(device == NULL) {
-        LOG_TRACE("getting list of HID devices...");
-        struct hid_device_info *cur_device = hid_enumerate(KEYBOARD_VID, KEYBOARD_PID);
-        struct hid_device_info *first_device = cur_device;
-        while (cur_device != NULL) {
-            LOG_TRACE(
-                "checking device: path=%s, vid=0x%04hx, pid=0x%04hx, serial_number=%ls, release_number=0x%hx, manufacturer_string=%ls, product_string=%ls, usage_page=0x%hx, usage=0x%hx",
-                      cur_device->path,
-                      cur_device->vendor_id,
-                      cur_device->product_id,
-                      cur_device->serial_number,
-                      cur_device->release_number,
-                      cur_device->manufacturer_string,
-                      cur_device->product_string,
-                      cur_device->usage_page,
-                      cur_device->usage);
-            if (cur_device->usage_page == RAW_USAGE_PAGE && cur_device->usage == RAW_USAGE_ID) {
-                LOG_INFO("keyboard found, connecting...");
-                LOG_DEBUG("opening device at path %s", cur_device->path);
-                device = hid_open_path(cur_device->path);
-                if(device == NULL) {
-                    LOG_ERROR("failed to open the device at path %s", cur_device->path);
-                }
-                else {
-                    LOG_INFO("connected to the keyboard successfully.");
-                    break;
-                }
-            }
-            cur_device = cur_device->next;
-        }
-        hid_free_enumeration(first_device);
-        sleep_for_ms(1000);
-    }
+    device = wait_for_device(KEYBOARD_VID, KEYBOARD_PID, RAW_USAGE_PAGE, RAW_USAGE_ID);
 
     // Read the Manufacturer String
-    res = hid_get_manufacturer_string(device, wstr, MAX_STR);
+    hid_get_manufacturer_string(device, wstr, MAX_STR);
     LOG_DEBUG("Manufacturer String: %ls", wstr);
 
     // Read the Product String
-    res = hid_get_product_string(device, wstr, MAX_STR);
+    hid_get_product_string(device, wstr, MAX_STR);
     LOG_DEBUG("Product String: %ls", wstr);
 
     report.os_type = get_os_type();
@@ -123,7 +91,18 @@ int main() {
                       layout_to_string(report.active_layout));
             res = hid_write(device, report.buf, REPORT_SIZE);
             if (res == -1) {
+                const wchar_t *err = hid_error(device);
                 LOG_ERROR("Failed to send HID Report to the keyboard.");
+                LOG_ERROR("Error: %ls", err);
+                // check if the device is still connected
+                char path[256] = {0};
+                find_device_path(KEYBOARD_VID, KEYBOARD_PID, RAW_USAGE_PAGE, RAW_USAGE_ID,path);
+                if (path[0] == '\0') {
+                    LOG_WARN("keyboard disconnected, waiting for it to be reconnected...");
+                    hid_close(device);
+                    device = wait_for_device(KEYBOARD_VID, KEYBOARD_PID, RAW_USAGE_PAGE, RAW_USAGE_ID);
+                    LOG_INFO("keyboard reconnected. continuing...");
+                }
             }
             else {
                 LOG_DEBUG("HID Report sent successfully.");
