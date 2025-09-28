@@ -1,0 +1,21 @@
+[Unit]
+Description=Hidrosis for daktylos
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/hidrosis
+Restart=on-failure
+RestartSec=5
+
+# Run as non-root user (recommended)
+User=hidrosis
+Group=hidrosis
+
+# Hardening (optional but good practice)
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target
