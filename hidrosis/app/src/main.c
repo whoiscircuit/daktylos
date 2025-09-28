@@ -85,7 +85,7 @@ int main() {
             cur_device = cur_device->next;
         }
         hid_free_enumeration(first_device);
-        sleep_for_seconds(1);
+        sleep_for_ms(1000);
     }
 
     // Read the Manufacturer String
@@ -126,6 +126,7 @@ int main() {
                 LOG_ERROR("Failed to send HID Report to the keyboard.");
             }
             else {
+                LOG_DEBUG("HID Report sent successfully.");
                 should_update = false;
             }
         }
@@ -134,7 +135,7 @@ int main() {
             LOG_WARN("termination signal received, quitting...");
             break;
         }
-        sleep_for_seconds(1);
+        sleep_for_ms(200);
     }
 
     hid_close(device);

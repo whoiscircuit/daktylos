@@ -5,11 +5,11 @@
 #    include <unistd.h>
 #endif
 
-void sleep_for_seconds(unsigned int seconds) {
+void sleep_for_ms(unsigned int ms) {
 #ifdef _WIN32
-    Sleep(seconds * 1000);
+    Sleep(ms);
 #else
-    sleep(seconds);
+    usleep(ms * 1000);
 #endif
 }
 
