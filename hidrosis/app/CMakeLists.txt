@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME}
     "src/util.c"
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE hidapi::hidapi)
+target_link_libraries(${PROJECT_NAME} PRIVATE cjson)
 
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)

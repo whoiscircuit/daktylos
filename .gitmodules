@@ -1,3 +1,6 @@
 [submodule "hidrosis/libs/hidapi"]
 	path = hidrosis/libs/hidapi
 	url = https://github.com/libusb/hidapi
+[submodule "hidrosis/libs/cjson"]
+	path = hidrosis/libs/cjson
+	url = https://github.com/DaveGamble/cJSON
