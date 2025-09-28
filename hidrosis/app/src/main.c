@@ -28,6 +28,7 @@ typedef union {
 
 int main() {
     log_init("hidrosis");
+    log_set_level(LOG_LEVEL_TRACE);
     LOG_INFO("starting hidrosis service...");
 
     sigset_t set;
@@ -38,12 +39,13 @@ int main() {
     HIDReport   report;
     memset(report.buf, 0, REPORT_SIZE + 1);
 
-
+    LOG_TRACE("setting up signal handlers...");
     sigemptyset(&set);
     sigaddset(&set, SIGINT);
     sigaddset(&set, SIGTERM);
-    sigprocmask(SIG_BLOCK, &set, NULL);
+    pthread_sigmask(SIG_BLOCK, &set, NULL);
 
+    LOG_DEBUG("initializing hidapi library...");
     res = hid_init();
     if (res == -1) {
         LOG_FATAL("Failed to initialize hidapi library! quitting.\n");
@@ -53,11 +55,24 @@ int main() {
     // wait for the keyboard to be connected
     LOG_INFO("waiting for keyboard to be connected...");
     while(device == NULL) {
+        LOG_TRACE("getting list of HID devices...");
         struct hid_device_info *cur_device = hid_enumerate(KEYBOARD_VID, KEYBOARD_PID);
         struct hid_device_info *first_device = cur_device;
         while (cur_device != NULL) {
+            LOG_TRACE(
+                "checking device: path=%s, vid=0x%04hx, pid=0x%04hx, serial_number=%ls, release_number=0x%hx, manufacturer_string=%ls, product_string=%ls, usage_page=0x%hx, usage=0x%hx",
+                      cur_device->path,
+                      cur_device->vendor_id,
+                      cur_device->product_id,
+                      cur_device->serial_number,
+                      cur_device->release_number,
+                      cur_device->manufacturer_string,
+                      cur_device->product_string,
+                      cur_device->usage_page,
+                      cur_device->usage);
             if (cur_device->usage_page == RAW_USAGE_PAGE && cur_device->usage == RAW_USAGE_ID) {
                 LOG_INFO("keyboard found, connecting...");
+                LOG_DEBUG("opening device at path %s", cur_device->path);
                 device = hid_open_path(cur_device->path);
                 if(device == NULL) {
                     LOG_ERROR("failed to open the device at path %s", cur_device->path);
@@ -89,8 +104,9 @@ int main() {
         LOG_DEBUG("Detected OS type: %s", os_type_to_string(report.os_type));
     }
 
-    bool should_update = false;
-    for (;;) {
+    LOG_INFO("Starting main loop...");
+    bool should_update = true;
+    for(;;){
         keyboard_layout_t layout = get_keyboard_layout();
         if (layout == LAYOUT_UNKNOWN) {
             LOG_WARN("Failed to get the active keyboard layout!");
@@ -102,6 +118,9 @@ int main() {
             }
         }
         if(should_update){
+            LOG_DEBUG("Sending HID Report: os_type=%s, active_layout=%s",
+                      os_type_to_string(report.os_type),
+                      layout_to_string(report.active_layout));
             res = hid_write(device, report.buf, REPORT_SIZE);
             if (res == -1) {
                 LOG_ERROR("Failed to send HID Report to the keyboard.");
@@ -110,9 +129,9 @@ int main() {
                 should_update = false;
             }
         }
-        sigwait(&set, &sig);
+        sig = check_signal(&set);
         if (sig == SIGINT || sig == SIGTERM){
-            LOG_INFO("termination signal received, quitting...");
+            LOG_WARN("termination signal received, quitting...");
             break;
         }
         sleep_for_seconds(1);
