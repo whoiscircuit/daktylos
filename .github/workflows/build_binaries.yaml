@@ -1,20 +1,38 @@
 name: Build QMK firmware
 
-on: [push, workflow_dispatch]
+on: [workflow_dispatch]
 
 permissions:
   contents: write
 
 jobs:
-  build:
-    name: 'QMK Userspace Build'
-    uses: qmk/.github/.github/workflows/qmk_userspace_build.yml@main
-    with:
-      qmk_repo: qmk/qmk_firmware
-      qmk_ref: master
+#   build_qmk:
+#     name: 'QMK Userspace Build'
+#     uses: qmk/.github/.github/workflows/qmk_userspace_build.yml@main
+#     with:
+#       qmk_repo: qmk/qmk_firmware
+#       qmk_ref: master
+  build_hidrosis_linux:
+    name: 'Hidrosis Linux Build'
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v4
+          with:
+            submodules: true
+        - name: Install Dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y cmake build-essential libusb-1.0-0-dev
+        - name: Build Hidrosis for Linux
+          run: |
+            mkdir -p hidrosis/build
+            cd hidrosis/build
+            cmake ..
+            cmake --build .
 
-  publish:
-    name: 'QMK Userspace Publish'
-    uses: qmk/.github/.github/workflows/qmk_userspace_publish.yml@main
-    if: always() && !cancelled()
-    needs: build
+#   publish:
+#     name: 'QMK Userspace Publish'
+#     uses: qmk/.github/.github/workflows/qmk_userspace_publish.yml@main
+#     if: always() && !cancelled()
+#     needs: build_qmk
