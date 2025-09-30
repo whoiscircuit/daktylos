@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-rm /etc/systemd/user/hidrosis.service
-rm /etc/udev/rules.d/90-hidrosis.rules
+rm -f /etc/systemd/user/hidrosis.service
+rm -f /etc/udev/rules.d/90-hidrosis.rules
 
 exit 0
