@@ -62,6 +62,7 @@ hid_device *wait_for_device(unsigned short vendor_id, unsigned short product_id,
     sigset_t    set;
     char        path[256] = {0};
     int         sig       = 0;
+    int wait_time = 1000;
     sigemptyset(&set);
     sigaddset(&set, SIGINT);
     sigaddset(&set, SIGTERM);
@@ -69,10 +70,12 @@ hid_device *wait_for_device(unsigned short vendor_id, unsigned short product_id,
     while (device == NULL) {
         find_device_path(vendor_id, product_id, usage_page, usage_id, path);
         if (path[0] != '\0') {
+            wait_time = 1000;
             device = open_device(path);
         }
         if (device == NULL) {
-            sleep_for_ms(1000);
+            wait_time = MAX((int)(wait_time * 1.2),30000);
+            sleep_for_ms(wait_time);
         }
         sig = check_signal(&set);
         if (sig == SIGINT || sig == SIGTERM){

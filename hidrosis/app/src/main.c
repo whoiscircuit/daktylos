@@ -79,11 +79,14 @@ int main() {
 
     LOG_INFO("Starting main loop...");
     bool should_update = true;
+    int wait_time = 200;
     for(;;){
         keyboard_layout_t layout = get_keyboard_layout();
         if (layout == LAYOUT_UNKNOWN) {
             LOG_WARN("Failed to get the active keyboard layout!");
+            wait_time = MAX((int)(wait_time * 1.2),30000);
         } else {
+            wait_time = 200; // reset wait time
             if (layout != report.active_layout) {
                 report.active_layout = layout;
                 should_update = true;
@@ -99,6 +102,7 @@ int main() {
                 const wchar_t *err = hid_error(device);
                 LOG_ERROR("Failed to send HID Report to the keyboard.");
                 LOG_ERROR("Error: %ls", err);
+                wait_time = MAX((int)(wait_time * 1.2),30000);
                 // check if the device is still connected
                 char path[256] = {0};
                 find_device_path(KEYBOARD_VID, KEYBOARD_PID, RAW_USAGE_PAGE, RAW_USAGE_ID,path);
@@ -113,6 +117,7 @@ int main() {
                 }
             }
             else {
+                wait_time = 200;
                 LOG_DEBUG("HID Report sent successfully.");
                 should_update = false;
             }
@@ -122,7 +127,7 @@ int main() {
             LOG_WARN("termination signal received, quitting...");
             break;
         }
-        sleep_for_ms(200);
+        sleep_for_ms(wait_time);
     }
 
     hid_close(device);
