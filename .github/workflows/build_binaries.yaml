@@ -1,6 +1,6 @@
 name: Build QMK firmware + Hidrosis
 
-on: [workflow_dispatch]
+on: [workflow_dispatch,push]
 
 permissions:
   contents: write
@@ -12,7 +12,7 @@ jobs:
 #     with:
 #       qmk_repo: qmk/qmk_firmware
 #       qmk_ref: master
-  build_hidrosis_linux:
+  build_linux:
     name: 'Hidrosis Linux Build'
     runs-on: ubuntu-latest
     steps:
@@ -23,13 +23,86 @@ jobs:
         - name: Install Dependencies
           run: |
             sudo apt-get update
-            sudo apt-get install -y cmake build-essential libusb-1.0-0-dev libudev-dev
+            sudo apt-get install -y cmake build-essential libusb-1.0-0-dev libudev-dev libxkbcommon-x11-dev libx11-dev libxkbcommon-dev libxkbfile-dev
         - name: Build Hidrosis for Linux
           run: |
             mkdir -p hidrosis/build
             cd hidrosis/build
             cmake ..
             cmake --build .
+        - name: Create the .deb package
+          id: build_deb
+          run: |
+            cd hidrosis
+            export DEB_DIR=$(mktemp -d)
+            export VERSION=${GITHUB_SHA::7}
+            echo "DEB_DIR=$DEB_DIR" >> $GITHUB_ENV
+            echo "DEB_DIR=$DEB_DIR" >> $GITHUB_OUTPUT
+            echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+            echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_ENV
+            mkdir -p $DEB_DIR/DEBIAN
+            cp packaging/linux/debian/* $DEB_DIR/DEBIAN
+            mkdir -p $DEB_DIR/usr/bin
+            cp build/app/hidrosis $DEB_DIR/usr/bin/
+            chmod +x $DEB_DIR/usr/bin/hidrosis
+            mkdir -p $DEB_DIR/etc/systemd/user
+            cp packaging/linux/systemd/hidrosis.service $DEB_DIR/etc/systemd/user/
+            chmod 755 $DEB_DIR/DEBIAN/postinstall
+            chmod 755 $DEB_DIR/DEBIAN/postrm
+            mkdir -p $DEB_DIR/etc/udev/rules.d/
+            cp packaging/linux/90-hidrosis.rules $DEB_DIR/etc/udev/rules.d/
+            dpkg-deb --build $DEB_DIR $DEB_DIR/hidrosis-linux-aarch64-${VERSION}.deb
+
+        - name: Upload artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: debian.deb
+            path: ${{steps.build_deb.outputs.DEB_DIR}}/hidrosis-linux-aarch64-${{steps.build_deb.outputs.VERSION}}.deb
+
+  release:
+    needs: [build_linux]   # Wait for build jobs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: get VERSION
+        id: version
+        run: |
+          export VERSION=${GITHUB_SHA::7}
+          echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Download Linux build
+        uses: actions/download-artifact@v4
+        with:
+          name: debian.deb
+          path: dist/
+
+      - name: Get timestamp
+        id: ts
+        run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
+      # Create the release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.ts.outputs.timestamp }}
+          release_name: Release ${{ steps.ts.outputs.timestamp }}
+          body: "Automated release from GitHub Actions"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Upload artifacts to the release
+      - name: Upload Linux executable
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/hidrosis-linux-aarch64-${{steps.version.outputs.VERSION}}.deb
+          asset_name: hidrosis-linux-aarch64-${{steps.version.outputs.VERSION}}.deb
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 #   publish:
 #     name: 'QMK Userspace Publish'

@@ -1,0 +1,10 @@
+Package: hidrosis
+Version: 0.2.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: libc6 (>= 2.28)
+Maintainer: Circuit <oxcl@proton.me>
+Description: Hidrosis integrates the daktylos keyboard with the host machine
+ Hidrosis helps the daktylos keyboard (elephant42) to detect operating system,
+ active keyboard layout and other attributes.

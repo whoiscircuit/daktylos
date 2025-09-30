@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+# Enable new udev rule
+udevadm control --reload
+udevadm trigger
+
+exit 0
