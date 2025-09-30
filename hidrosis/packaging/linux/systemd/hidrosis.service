@@ -13,4 +13,4 @@ ProtectSystem=full
 ProtectHome=yes
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=graphical.target
