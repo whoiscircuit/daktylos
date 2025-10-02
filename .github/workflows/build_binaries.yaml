@@ -63,7 +63,7 @@ jobs:
             cp ./packaging/linux/90-hidrosis.rules $RPM_DIR/SOURCES
             rm -rf ~/rpmbuild
             mv $RPM_DIR ~/rpmbuild
-            rpmbuild -ba ~rpmbuild/SPECS/hidrosis.spec
+            rpmbuild -ba ~/rpmbuild/SPECS/hidrosis.spec
 
         - name: Upload artifact
           uses: actions/upload-artifact@v4
