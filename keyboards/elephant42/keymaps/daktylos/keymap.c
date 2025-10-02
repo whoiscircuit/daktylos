@@ -5,6 +5,7 @@
 enum layer_names {
     _COLEMAKDH,
     _FARSI,
+    _COLEMAKDH_OVERLAY,
     NUM,
     FUN,
     SYM,
@@ -101,6 +102,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_SLSH    ,   MT_LGUI_A  ,   MT_LALT_S  ,   MT_LCTL_D  ,   MT_LSFT_F  ,     KC_G     ,        KC_H     ,   MT_RSFT_J  ,   MT_RCTL_K  ,   MT_RALT_L  , MT_RGUI_SCLN ,   KC_EQUAL   ,
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                          KC_Z     ,     KC_X     ,     KC_C     ,     KC_V     ,     KC_B     ,        KC_N     ,     KC_M     ,   KC_COMM    ,    KC_DOT    ,   KC_QUOTE   ,
+  //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
+                                       KC_F13    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,   MY_MENU
+  //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
+  ),
+  [_COLEMAKDH_OVERLAY] = LAYOUT(
+  //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
+         KC_GRV    ,     KC_Q     ,     KC_W     ,     KC_F     ,     KC_P     ,     KC_B     ,        KC_J     ,     KC_L     ,     KC_U     ,     KC_Y     ,   KC_DQUO    ,   KC_UNDS    ,
+  //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
+        KC_SLSH    ,   MT_LGUI_A  ,   MT_LALT_R  ,   MT_LCTL_S  ,   MT_LSFT_T  ,     KC_G     ,        KC_M     ,   MT_RSFT_N  ,   MT_RCTL_E  ,   MT_RALT_I  ,   MT_RGUI_O  ,   KC_EQUAL   ,
+  //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
+                         KC_Z     ,     KC_X     ,     KC_C     ,     KC_D     ,     KC_V     ,        KC_K     ,     KC_H     ,    KC_COMM   ,    KC_DOT    ,   KC_SCLN    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
                                        KC_F13    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,   MY_MENU
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
@@ -328,12 +340,12 @@ void eeconfig_init_user() {
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if(get_mods() & ~MOD_MASK_SHIFT && layer_state_is(_FARSI)){
-        layer_on(_COLEMAKDH);
+        layer_on(_COLEMAKDH_OVERLAY);
     }
     else {
-        layer_off(_COLEMAKDH);
+        layer_off(_COLEMAKDH_OVERLAY);
     }
-    
+
     if (get_mods() & MOD_MASK_RIGHT) {
         layer_on(BLOCK_RIGHT);
     } else {
