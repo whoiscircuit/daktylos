@@ -61,9 +61,9 @@ jobs:
             cp ./packaging/linux/fedora/SPEC $RPM_DIR/SPECS/hidrosis.spec
             cp ./packaging/linux/systemd/hidrosis.service $RPM_DIR/SOURCES
             cp ./packaging/linux/90-hidrosis.rules $RPM_DIR/SOURCES
-            echo "ding;" ; ls -la
+            echo "ding;" ; find $RPM_DIR
             rpmbuild -ba $RPM_DIR/SPECS/hidrosis.spec
-            echo "dong;" ; ls -la
+            echo "dong;" ; 
 
         - name: Upload artifact
           uses: actions/upload-artifact@v4
