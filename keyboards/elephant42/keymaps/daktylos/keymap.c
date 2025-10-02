@@ -1,3 +1,4 @@
+#include "quantum.h"
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
 #include "transactions.h"
@@ -339,15 +340,6 @@ void eeconfig_init_user() {
 }
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (get_mods() & ~MOD_MASK_SHIFT) {
-        if (layer_state_is(_FARSI)) {
-            layer_on(_COLEMAKDH_OVERLAY);
-        }
-    }
-    else {
-        layer_off(_COLEMAKDH_OVERLAY);
-    }
-
     if (get_mods() & MOD_MASK_RIGHT) {
         layer_on(BLOCK_RIGHT);
     } else {
@@ -360,6 +352,17 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         layer_off(BLOCK_LEFT);
     }
     return true;
+}
+
+void post_process_record_user(uint16_t keycode, keyrecord_t *record){
+    if (get_mods() & ~MOD_MASK_SHIFT) {
+        if (layer_state_is(_FARSI)) {
+            layer_on(_COLEMAKDH_OVERLAY);
+        }
+    }
+    else {
+        layer_off(_COLEMAKDH_OVERLAY);
+    }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
