@@ -67,7 +67,7 @@ jobs:
             mv $RPM_DIR ~/rpmbuild
             rpmbuild -ba ~/rpmbuild/SPECS/hidrosis.spec
             find ~/rpmbuild
-            mv ~/rpmbuild/RPMS/x86_64/*.rpm $RPM_DIR/fedora.rpm
+            cp ~/rpmbuild/RPMS/x86_64/*.rpm $RPM_DIR/fedora.rpm
 
         - name: Upload .deb
           uses: actions/upload-artifact@v4
