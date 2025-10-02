@@ -327,6 +327,13 @@ void eeconfig_init_user() {
 }
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if(get_mods() & ~MOD_MASK_SHIFT && layer_state_is(_FARSI)){
+        layer_on(_COLEMAKDH);
+    }
+    else {
+        layer_off(_COLEMAKDH);
+    }
+    
     if (get_mods() & MOD_MASK_RIGHT) {
         layer_on(BLOCK_RIGHT);
     } else {
