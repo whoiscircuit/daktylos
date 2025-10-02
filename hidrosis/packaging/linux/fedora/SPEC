@@ -23,7 +23,8 @@ active keyboard layout and other attributes.
 # Nothing to build
 
 %install
-rm -rf %{buildroot}
+find %{buildroot}
+ls %{SOURCE0} %{SOURCE1} %{SOURCE2}
 mkdir -p %{buildroot}/usr/bin
 install -m 0755 %{SOURCE0} %{buildroot}/usr/bin/hidrosis
 mkdir -p %{buildroot}/usr/lib/systemd/user
