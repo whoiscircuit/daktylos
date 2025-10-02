@@ -351,18 +351,19 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     } else {
         layer_off(BLOCK_LEFT);
     }
-    return true;
-}
 
-void post_process_record_user(uint16_t keycode, keyrecord_t *record){
     if (get_mods() & ~MOD_MASK_SHIFT) {
+        state.oled.mode = OLED_JOYSTICK;
         if (IS_LAYER_ON(_FARSI)) {
             layer_on(_COLEMAKDH_OVERLAY);
         }
     }
     else {
+        state.oled.mode = OLED_OFF;
         layer_off(_COLEMAKDH_OVERLAY);
     }
+
+    return true;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
