@@ -273,7 +273,7 @@ enum OS_TYPES {
 
 enum KEYBOARD_LAYOUT {
     LAYOUT_ENGLISH = 0,
-    LAYOUT_FARSI = 1,
+    LAYOUT_FARSI   = 1,
 };
 
 typedef union {
@@ -291,7 +291,7 @@ typedef union {
             uint8_t raw;
             struct {
                 unsigned os_type : 2;
-                unsigned active_layout :2;
+                unsigned active_layout : 2;
             };
         } hid;
     };
@@ -339,8 +339,10 @@ void eeconfig_init_user() {
 }
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if(get_mods() & ~MOD_MASK_SHIFT && layer_state_is(_FARSI)){
-        layer_on(_COLEMAKDH_OVERLAY);
+    if (get_mods() & ~MOD_MASK_SHIFT) {
+        if (layer_state_is(_FARSI)) {
+            layer_on(_COLEMAKDH_OVERLAY);
+        }
     }
     else {
         layer_off(_COLEMAKDH_OVERLAY);
@@ -375,11 +377,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case LT_NAV_SPC:
-            if(!record->event.pressed && state.hid.os_type == OS_UNKNOWN && get_mods() & MOD_BIT(KC_RGUI)){
-                if(state.hid.active_layout == LAYOUT_ENGLISH){
+            if (!record->event.pressed && state.hid.os_type == OS_UNKNOWN && get_mods() & MOD_BIT(KC_RGUI)) {
+                if (state.hid.active_layout == LAYOUT_ENGLISH) {
                     state.hid.active_layout = LAYOUT_FARSI;
-                }
-                else{
+                } else {
                     state.hid.active_layout = LAYOUT_ENGLISH;
                 }
             }
@@ -594,10 +595,10 @@ bool oled_task_user(void) {
                 oled_advance_page(false);
                 switch (state.hid.active_layout) {
                     case LAYOUT_ENGLISH:
-                        oled_write_P(PSTR("\x5F\x10\x19\x12\x5F"),false);
+                        oled_write_P(PSTR("\x5F\x10\x19\x12\x5F"), false);
                         break;
                     case LAYOUT_FARSI:
-                        oled_write_P(PSTR("\x5F\x11\x0C\x1D\x5F"),false);
+                        oled_write_P(PSTR("\x5F\x11\x0C\x1D\x5F"), false);
                         break;
                 }
             } else {
