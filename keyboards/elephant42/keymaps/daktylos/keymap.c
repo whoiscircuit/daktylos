@@ -356,7 +356,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 void post_process_record_user(uint16_t keycode, keyrecord_t *record){
     if (get_mods() & ~MOD_MASK_SHIFT) {
-        if (layer_state_is(_FARSI)) {
+        if (IS_LAYER_ON(_FARSI)) {
             layer_on(_COLEMAKDH_OVERLAY);
         }
     }
