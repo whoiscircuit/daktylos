@@ -66,6 +66,7 @@ jobs:
             rm -rf ~/rpmbuild
             mv $RPM_DIR ~/rpmbuild
             rpmbuild -ba ~/rpmbuild/SPECS/hidrosis.spec
+            find ~/rpmbuild
             rm ~/rpmbuild/RPMS/*.src.rpm
             mv ~/rpmbuild/RPMS/*.rpm $RPM_DIR/fedora.rpm
 
