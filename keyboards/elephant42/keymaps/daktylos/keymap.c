@@ -1,3 +1,4 @@
+#include "action_layer.h"
 #include "quantum.h"
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
@@ -356,7 +357,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (get_mods() & ~MOD_MASK_SHIFT) {
-        if (IS_LAYER_ON(_FARSI)) {
+        if (default_layer_state & (1 << _FARSI)) {
             state.oled.mode = OLED_JOYSTICK;
             layer_on(_COLEMAKDH_OVERLAY);
         }
