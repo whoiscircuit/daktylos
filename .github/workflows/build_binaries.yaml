@@ -12,8 +12,8 @@ jobs:
 #     with:
 #       qmk_repo: qmk/qmk_firmware
 #       qmk_ref: master
-  build_deb:
-    name: 'Hidrosis Debian Build'
+  build_linux:
+    name: 'Hidrosis Linux Build'
     runs-on: ubuntu-latest
     steps:
         - name: Checkout Repository
@@ -23,15 +23,15 @@ jobs:
         - name: Install Dependencies
           run: |
             sudo apt-get update
-            sudo apt-get install -y cmake build-essential libusb-1.0-0-dev libudev-dev libxkbcommon-x11-dev libx11-dev libxkbcommon-dev libxkbfile-dev
-        - name: Build Hidrosis for Debian
+            sudo apt-get install -y cmake build-essential libusb-1.0-0-dev libudev-dev libxkbcommon-x11-dev libx11-dev libxkbcommon-dev libxkbfile-dev rpm rpm-build rpmdevtools
+        - name: Build Hidrosis for Linux
           run: |
             mkdir -p hidrosis/build
             cd hidrosis/build
             cmake ..
             cmake --build .
-        - name: Create the .deb package
-          id: build_deb
+        - name: Create the .deb & .rpm packages
+          id: build_linux
           run: |
             cd hidrosis
             export DEB_DIR=$(mktemp -d)
@@ -53,55 +53,22 @@ jobs:
             cp packaging/linux/90-hidrosis.rules $DEB_DIR/usr/lib/udev/rules.d/
             dpkg-deb --build $DEB_DIR $DEB_DIR/hidrosis-linux-aarch64.deb
 
+            rpmdev-setuptree
+            cp ./build/app/hidrosis ~/rpmbuild/SOURCES/
+            cp ./packaging/linux/fedora/SPEC ~/rpmbuild/SPECS/hidrosis.spec
+            cp ./packaging/linux/systemd/hidrosis.service ~/rpmbuild/SOURCES
+            cp ./packaging/linux/90-hidrosis.rules ~/rpmbuild/SOURCES
+            rpmbuild -ba ~/rpmbuild/SPECS/myproject.spec
+            ls -la
+
         - name: Upload artifact
           uses: actions/upload-artifact@v4
           with:
             name: debian.deb
             path: ${{steps.build_deb.outputs.DEB_DIR}}/hidrosis-linux-aarch64.deb
 
-  build_rpm:
-      name: 'Hidrosis Fedora Build'
-      runs-on: fedora-latest
-      steps:
-          - name: Checkout Repository
-            uses: actions/checkout@v4
-            with:
-              submodules: true
-          - name: Install Dependencies
-            run: |
-              sudo dnf groupinstall -y "Development Tools"
-              sudo dnf install -y cmake libusb1-devel systemd-devel libxkbcommon-x11-devel libX11-devel libxkbcommon-devel libxkbfile-devel rpm-build rpmdevtools
-          - name: Build Hidrosis for Fedora
-            run: |
-              mkdir -p hidrosis/build
-              cd hidrosis/build
-              cmake ..
-              cmake --build .
-          - name: Create the .rpm package
-            id: build_rpm
-            run: |
-              cd hidrosis
-              rpmdev-setuptree
-              cp ./build/app/hidrosis ~/rpmbuild/SOURCES/
-              cp ./packaging/linux/fedora/SPEC ~/rpmbuild/SPECS/hidrosis.spec
-              cp ./packaging/linux/systemd/hidrosis.service ~/rpmbuild/SOURCES
-              cp ./packaging/linux/90-hidrosis.rules ~/rpmbuild/SOURCES
-              rpmbuild -ba ~/rpmbuild/SPECS/myproject.spec
-              ls -la
-              export VERSION=${GITHUB_SHA::7}
-              echo "RPM_DIR=$RPM_DIR" >> $GITHUB_ENV
-              echo "RPM_DIR=$RPM_DIR" >> $GITHUB_OUTPUT
-              echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-              echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_ENV
-
-          - name: Upload artifact
-            uses: actions/upload-artifact@v4
-            with:
-              name: debian.deb
-              path: ${{steps.build_rpm.outputs.RPM_DIR}}/hidrosis-linux-aarch64.deb
-
   release:
-    needs: [build_deb,build_rpm]   # Wait for build jobs
+    needs: [build_linux]   # Wait for build jobs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
