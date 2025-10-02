@@ -36,8 +36,6 @@ install -m 0644 %{SOURCE2} %{buildroot}/usr/lib/udev/rules.d/90-hidrosis.rules
 /usr/bin/hidrosis
 /usr/lib/systemd/user/hidrosis.service
 /usr/lib/udev/rules.d/90-hidrosis.rules
-%doc README.md
-%license LICENSE
 
 %changelog
 * Thu Oct 02 2025 Circuit <oxcl@proton.me> - 1.0-1
