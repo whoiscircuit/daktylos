@@ -356,8 +356,8 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (get_mods() & ~MOD_MASK_SHIFT) {
-        state.oled.mode = OLED_JOYSTICK;
         if (IS_LAYER_ON(_FARSI)) {
+            state.oled.mode = OLED_JOYSTICK;
             layer_on(_COLEMAKDH_OVERLAY);
         }
     } else {
