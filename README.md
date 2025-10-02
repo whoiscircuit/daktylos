@@ -8,3 +8,12 @@
     systemctl --user reload-daemon
     systemctl --user enable hidrosis.service --now
 ```
+## Fedora
+```sh
+    wget -O /tmp/hidrosis.rpm https://github.com/whoiscircuit/daktylos/releases/latest/download/hidrosis-linux-aarch64.rpm
+    sudo apt install -y /tmp/hidrosis.rpm
+    sudo udevadm control --reload
+    sudo udevadm trigger
+    systemctl --user reload-daemon
+    systemctl --user enable hidrosis.service --now
+```
