@@ -1,3 +1,5 @@
+#include "action_layer.h"
+#include "quantum.h"
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
 #include "transactions.h"
@@ -5,6 +7,7 @@
 enum layer_names {
     _COLEMAKDH,
     _FARSI,
+    _COLEMAKDH_OVERLAY,
     NUM,
     FUN,
     SYM,
@@ -101,6 +104,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_SLSH    ,   MT_LGUI_A  ,   MT_LALT_S  ,   MT_LCTL_D  ,   MT_LSFT_F  ,     KC_G     ,        KC_H     ,   MT_RSFT_J  ,   MT_RCTL_K  ,   MT_RALT_L  , MT_RGUI_SCLN ,   KC_EQUAL   ,
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                          KC_Z     ,     KC_X     ,     KC_C     ,     KC_V     ,     KC_B     ,        KC_N     ,     KC_M     ,   KC_COMM    ,    KC_DOT    ,   KC_QUOTE   ,
+  //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
+                                       KC_F13    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,   MY_MENU
+  //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
+  ),
+  [_COLEMAKDH_OVERLAY] = LAYOUT(
+  //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
+         KC_GRV    ,     KC_Q     ,     KC_W     ,     KC_F     ,     KC_P     ,     KC_B     ,        KC_J     ,     KC_L     ,     KC_U     ,     KC_Y     ,   KC_DQUO    ,   KC_UNDS    ,
+  //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
+        KC_SLSH    ,   MT_LGUI_A  ,   MT_LALT_R  ,   MT_LCTL_S  ,   MT_LSFT_T  ,     KC_G     ,        KC_M     ,   MT_RSFT_N  ,   MT_RCTL_E  ,   MT_RALT_I  ,   MT_RGUI_O  ,   KC_EQUAL   ,
+  //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
+                         KC_Z     ,     KC_X     ,     KC_C     ,     KC_D     ,     KC_V     ,        KC_K     ,     KC_H     ,    KC_COMM   ,    KC_DOT    ,   KC_SCLN    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
                                        KC_F13    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,   MY_MENU
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
@@ -261,7 +275,7 @@ enum OS_TYPES {
 
 enum KEYBOARD_LAYOUT {
     LAYOUT_ENGLISH = 0,
-    LAYOUT_FARSI = 1,
+    LAYOUT_FARSI   = 1,
 };
 
 typedef union {
@@ -279,7 +293,7 @@ typedef union {
             uint8_t raw;
             struct {
                 unsigned os_type : 2;
-                unsigned active_layout :2;
+                unsigned active_layout : 2;
             };
         } hid;
     };
@@ -327,13 +341,6 @@ void eeconfig_init_user() {
 }
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if(get_mods() & ~MOD_MASK_SHIFT && layer_state_is(_FARSI)){
-        layer_on(_COLEMAKDH);
-    }
-    else {
-        layer_off(_COLEMAKDH);
-    }
-    
     if (get_mods() & MOD_MASK_RIGHT) {
         layer_on(BLOCK_RIGHT);
     } else {
@@ -345,7 +352,19 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     } else {
         layer_off(BLOCK_LEFT);
     }
+
     return true;
+}
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (get_mods() & ~MOD_MASK_SHIFT) {
+        if (default_layer_state & (1 << _FARSI)) {
+            state.oled.mode = OLED_JOYSTICK;
+            layer_on(_COLEMAKDH_OVERLAY);
+        }
+    } else {
+        state.oled.mode = OLED_OFF;
+        layer_off(_COLEMAKDH_OVERLAY);
+    }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -363,11 +382,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case LT_NAV_SPC:
-            if(!record->event.pressed && state.hid.os_type == OS_UNKNOWN && get_mods() & MOD_BIT(KC_RGUI)){
-                if(state.hid.active_layout == LAYOUT_ENGLISH){
+            if (!record->event.pressed && state.hid.os_type == OS_UNKNOWN && get_mods() & MOD_BIT(KC_RGUI)) {
+                if (state.hid.active_layout == LAYOUT_ENGLISH) {
                     state.hid.active_layout = LAYOUT_FARSI;
-                }
-                else{
+                } else {
                     state.hid.active_layout = LAYOUT_ENGLISH;
                 }
             }
@@ -582,10 +600,10 @@ bool oled_task_user(void) {
                 oled_advance_page(false);
                 switch (state.hid.active_layout) {
                     case LAYOUT_ENGLISH:
-                        oled_write_P(PSTR("\x5F\x10\x19\x12\x5F"),false);
+                        oled_write_P(PSTR("\x5F\x10\x19\x12\x5F"), false);
                         break;
                     case LAYOUT_FARSI:
-                        oled_write_P(PSTR("\x5F\x11\x0C\x1D\x5F"),false);
+                        oled_write_P(PSTR("\x5F\x11\x0C\x1D\x5F"), false);
                         break;
                 }
             } else {
