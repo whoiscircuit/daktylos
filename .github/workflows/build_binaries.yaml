@@ -61,6 +61,8 @@ jobs:
             cp ./packaging/linux/fedora/SPEC $RPM_DIR/SPECS/hidrosis.spec
             cp ./packaging/linux/systemd/hidrosis.service $RPM_DIR/SOURCES
             cp ./packaging/linux/90-hidrosis.rules $RPM_DIR/SOURCES
+            cp ./README.md $RPM_DIR/SOURCES
+            cp ../LICENSE $RPM_DIR/SOURCES
             rm -rf ~/rpmbuild
             mv $RPM_DIR ~/rpmbuild
             rpmbuild -ba ~/rpmbuild/SPECS/hidrosis.spec
