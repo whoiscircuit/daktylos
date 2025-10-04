@@ -73,13 +73,13 @@ jobs:
           uses: actions/upload-artifact@v4
           with:
             name: debian.deb
-            path: ${{steps.build_deb.outputs.DEB_DIR}}/hidrosis-linux-aarch64.deb
+            path: ${{steps.build_linux.outputs.DEB_DIR}}/hidrosis-linux-aarch64.deb
 
         - name: Upload .rpm
           uses: actions/upload-artifact@v4
           with:
             name: fedora.rpm
-            path: ${{steps.build_deb.outputs.RPM_DIR}}/fedora.rpm
+            path: ${{steps.build_linux.outputs.RPM_DIR}}/fedora.rpm
 
   release:
     needs: [build_linux]   # Wait for build jobs
