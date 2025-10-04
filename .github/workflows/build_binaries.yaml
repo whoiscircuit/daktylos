@@ -64,7 +64,7 @@ jobs:
             cp ./README.md $RPM_DIR/SOURCES
             cp ../LICENSE $RPM_DIR/SOURCES
             rm -rf ~/rpmbuild
-            mv $RPM_DIR ~/rpmbuild
+            cp -r $RPM_DIR ~/rpmbuild
             rpmbuild -ba ~/rpmbuild/SPECS/hidrosis.spec
             find ~/rpmbuild
             cp ~/rpmbuild/RPMS/x86_64/*.rpm $RPM_DIR/fedora.rpm
