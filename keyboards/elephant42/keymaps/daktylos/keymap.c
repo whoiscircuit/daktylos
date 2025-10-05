@@ -442,7 +442,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->event.pressed) {
                 switch (state.oled.mode) {
                     case OLED_MENU:
-                        set_single_default_layer(_COLEMAKDH);
+                        set_single_default_layer(state.hid.active_layout == LAYOUT_ENGLISH ? _COLEMAKDH : _FARSI);
                         state.oled.mode = OLED_OFF;
                         break;
                     case OLED_PREFS:
@@ -678,6 +678,6 @@ void housekeeping_task_user(void) {
             transaction_rpc_send(STATE_SYNC, sizeof(state.raw), &state.raw);
             last_sync = timer_read32();
         }
-        set_single_default_layer(state.hid.active_layout);
+        if(state.oled.mode == OLED_OFF) set_single_default_layer(state.hid.active_layout);
     }
 }
