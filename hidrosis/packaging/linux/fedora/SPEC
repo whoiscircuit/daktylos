@@ -9,8 +9,6 @@ Source0:        hidrosis
 Source1:        hidrosis.service
 Source2:        90-hidrosis.rules
 
-Requires:       libc, systemd, udev
-
 %description
 Hidrosis integrates the daktylos keyboard with the host machine
 Hidrosis helps the daktylos keyboard (elephant42) to detect operating system,
