@@ -14,54 +14,53 @@ static int x11_error_handler(Display *dpy, XErrorEvent *error) {
 }
 
 
-keyboard_layout_t x11_get_keyboard_layout() {
-    Display *dpy = XOpenDisplay(NULL);
-    if (!dpy) {
+Display* g_display = NULL;
+XkbDescRec *g_kbd = NULL;
+
+
+int x11_init_keyboard_layout(){
+    XSetErrorHandler(x11_error_handler);
+    g_display = XOpenDisplay(NULL);
+    if (!g_display) {
         LOG_ERROR("Failed to open X display\n");
         return -1;
     }
-
-    XErrorHandler old_handler = XSetErrorHandler(x11_error_handler);
-
-    int device_id = XkbUseCoreKbd;
-    XkbDescRec *kbd = XkbAllocKeyboard();
-    if (!kbd) {
-        XCloseDisplay(dpy);
-        XSetErrorHandler(old_handler);
+    g_kbd = XkbAllocKeyboard();
+    if (!g_kbd) {
+        XCloseDisplay(g_display);
         return -1;
     }
+    return 0;
+}
 
-    kbd->dpy = dpy;
-    if (XkbGetNames(dpy, XkbGroupNamesMask, kbd) != Success) {
-        XkbFreeKeyboard(kbd, 0, True);
-        XCloseDisplay(dpy);
-        XSetErrorHandler(old_handler);
+
+keyboard_layout_t x11_get_keyboard_layout() {
+    int device_id = XkbUseCoreKbd;
+
+    g_kbd->dpy = g_display;
+    if (XkbGetNames(g_display, XkbGroupNamesMask, g_kbd) != Success) {
         return -1;
     }
 
     XkbStateRec state;
-    if (XkbGetState(dpy, device_id, &state) != Success) {
-        XkbFreeKeyboard(kbd, 0, True);
-        XCloseDisplay(dpy);
-        XSetErrorHandler(old_handler);
+    if (XkbGetState(g_display, device_id, &state) != Success) {
         return -1;
     }
 
-    char *layout = XGetAtomName(dpy, kbd->names->groups[state.group]);
+    char *layout = XGetAtomName(g_display, g_kbd->names->groups[state.group]);
     if (!layout) {
-        XkbFreeKeyboard(kbd, 0, True);
-        XCloseDisplay(dpy);
-        XSetErrorHandler(old_handler);
         return -1;
     }
 
     keyboard_layout_t result = get_layout_from_string(layout);
 
     XFree(layout);
-    XkbFreeKeyboard(kbd, 0, True);
-    XCloseDisplay(dpy);
-    XSetErrorHandler(old_handler);
-
     return result;
 }
+
+void x11_close_keyboard_layout(){
+    XkbFreeKeyboard(g_kbd, 0, True);
+    XCloseDisplay(g_display);
+}
+
 #endif
