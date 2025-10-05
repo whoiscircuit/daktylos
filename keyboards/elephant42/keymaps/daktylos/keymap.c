@@ -550,7 +550,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
             return 0;
         case LT_NAV_SPC:
         case LT_SYM_BSPC:
-            return g_tapping_term * 1.2;
+            return g_tapping_term * 0.5;
         default:
             return g_tapping_term;
     }
