@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
       patchelf --print-rpath "$out/bin/hidrosis"
       mkdir -p $out/etc/systemd/user
       cp ../packaging/linux/systemd/hidrosis.service $out/etc/systemd/user/
-      mkdir -p $out/usr/lib/udev/rules.d/
-      cp ../packaging/linux/90-hidrosis.rules $out/usr/lib/udev/rules.d/
+      mkdir -p $out/lib/udev/rules.d/
+      cp ../packaging/linux/90-hidrosis.rules $out/lib/udev/rules.d/
     '';
 }
