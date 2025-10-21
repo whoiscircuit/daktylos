@@ -15,6 +15,8 @@
   in rec {
     packages.${system}.default = hidrosis;
     devShell = pkgs.mkShell {inputsFrom = hidrosis;};
-
+    overlays.default = final: prev: {
+      inherit hidrosis;
+    };
   };
 }
