@@ -8,6 +8,7 @@
 #include "os_type.h"
 #include "util.h"
 #include "log.h"
+#include <cjson/cJSON.h>
 
 #define KEYBOARD_VID 0x4649
 #define KEYBOARD_PID 0x0721
