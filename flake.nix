@@ -11,7 +11,7 @@
     pkgs = import nixpkgs {
       inherit system;
     };
-    hidrosis = import ./default.nix {pkgs};
+    hidrosis = import ./default.nix { inherit pkgs; };
   in rec {
     packages.${system}.default = hidrosis;
     devShell = pkgs.mkShell {inputsFrom = hidrosis;};
