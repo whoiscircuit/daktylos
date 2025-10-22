@@ -15,7 +15,7 @@ in
         let 
             originalServiceText = builtins.readFile ./hidrosis/packaging/linux/systemd/hidrosis.service;
             serviceWithInjectedExecutablePath = builtins.replaceStrings ["/usr/bin/hidrosis"] ["${hidrosis}/bin/hidrosis"] originalServiceText;
-        {
+        in {
             text = serviceWithInjectedExecutablePath;
         };
         
