@@ -1,7 +1,7 @@
 {config,lib, pkgs,...}: 
 let
   cfg = config.services.hidrosis;
-  hidrosis = pkg.callPackage ./default.nix {inherit pkgs; };
+  hidrosis = pkgs.callPackage ./default.nix {inherit pkgs; };
 in
 {
     options.services.hidrosis = {
