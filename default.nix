@@ -18,8 +18,8 @@ stdenv.mkDerivation rec {
       cp app/hidrosis $out/bin/
       patchelf --replace-needed libcjson.so.1 ${cjson}/lib/libcjson.so.1 "$out/bin/hidrosis"
       patchelf --print-rpath "$out/bin/hidrosis"
-      mkdir -p $out/etc/systemd/user
-      cp ../packaging/linux/systemd/hidrosis.service $out/etc/systemd/user/
+      mkdir -p $out/lib/systemd/user
+      cp ../packaging/linux/systemd/hidrosis.service $out/lib/systemd/user/
       mkdir -p $out/lib/udev/rules.d/
       cp ../packaging/linux/90-hidrosis.rules $out/lib/udev/rules.d/
     '';
