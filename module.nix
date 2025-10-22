@@ -11,8 +11,12 @@ in
     config = lib.mkIf cfg.enable {
         services.udev.packages = [ hidrosis ];
 
-        systemd.user.units."hidrosis.service" = {
-            text = builtins.readFile ./hidrosis/packaging/linux/systemd/hidrosis.service;
+        systemd.user.units."hidrosis.service" = 
+        let 
+            originalServiceText = builtins.readFile ./hidrosis/packaging/linux/systemd/hidrosis.service;
+            serviceWithInjectedExecutablePath = builtins.replaceStrings ["/usr/bin/hidrosis"] ["${hidrosis}/bin/hidrosis"] originalServiceText;
+        {
+            text = serviceWithInjectedExecutablePath;
         };
         
         environment.systemPackages = [ hidrosis ];
