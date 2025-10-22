@@ -11,10 +11,8 @@ in
     config = lib.mkIf cfg.enable {
         services.udev.packages = [ hidrosis ];
 
-        systemd.user.services.hidrosis = {
-            unitConfig = {
-                SourcePath = "${hidrosis}/lib/systemd/user/hidrosis.service";
-            };
+        systemd.user.services."hidrosis.service" = {
+            text = builtins.readFile ./hidrosis/packaging/linux/systemd/hidrosis.service;
         };
         
         environment.systemPackages = [ hidrosis ];
