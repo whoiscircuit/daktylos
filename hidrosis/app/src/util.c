@@ -57,7 +57,7 @@ hid_device *wait_for_device(unsigned short vendor_id, unsigned short product_id,
             device = open_device(path);
         }
         if (device == NULL) {
-            wait_time = MAX((int)(wait_time * 1.2),3000);
+            wait_time = MIN((int)(wait_time * 1.2),30000);
             sleep_for_ms(wait_time);
         }
         sig = check_signal(&set);

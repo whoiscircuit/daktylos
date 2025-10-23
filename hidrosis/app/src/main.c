@@ -7,6 +7,7 @@
 #include "os_type.h"
 #include "util.h"
 #include "log.h"
+#include <signal.h>
 
 #define KEYBOARD_VID 0x4649
 #define KEYBOARD_PID 0x0721
@@ -71,7 +72,11 @@ int main() {
         LOG_DEBUG("Detected OS type: %s", os_type_to_string(report.os_type));
     }
 
-    init_keyboard_layout();
+    res = init_keyboard_layout();
+    if(res != 0){
+        LOG_FATAL("a fatal problem occured during initlaization of keyboard layout setup.");
+        return -1;
+    }
 
     LOG_INFO("Starting main loop...");
     bool should_update = true;
@@ -80,7 +85,7 @@ int main() {
         keyboard_layout_t layout = get_keyboard_layout();
         if (layout == LAYOUT_UNKNOWN) {
             LOG_WARN("Failed to get the active keyboard layout!");
-            wait_time = MAX((int)(wait_time * 1.2),30000);
+            wait_time = MIN((int)(wait_time * 1.2),30000);
         } else {
             wait_time = 200; // reset wait time
             if (layout != report.active_layout) {
@@ -98,7 +103,7 @@ int main() {
                 const wchar_t *err = hid_error(device);
                 LOG_ERROR("Failed to send HID Report to the keyboard.");
                 LOG_ERROR("Error: %ls", err);
-                wait_time = MAX((int)(wait_time * 1.2),30000);
+                wait_time = MIN((int)(wait_time * 1.2),30000);
                 // check if the device is still connected
                 char path[256] = {0};
                 find_device_path(KEYBOARD_VID, KEYBOARD_PID, RAW_USAGE_PAGE, RAW_USAGE_ID,path);
