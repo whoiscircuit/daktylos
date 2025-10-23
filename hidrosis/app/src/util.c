@@ -1,8 +1,9 @@
 #include "util.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include "hidapi.h"
 #include "log.h"
+#include <signal.h>
+#include "signal_control.h"
 #ifdef _WIN32
 #    include <windows.h>
 #else
@@ -15,18 +16,6 @@ void sleep_for_ms(unsigned int ms) {
 #else
     usleep(ms * 1000);
 #endif
-}
-
-int check_signal(sigset_t *set) {
-    sigset_t pending;
-    if (sigpending(&pending) == -1) return -1;
-
-    for (int sig = 1; sig < NSIG; sig++) {
-        if (sigismember(set, sig) && sigismember(&pending, sig)) {
-            return sig;
-        }
-    }
-    return 0;
 }
 
 void find_device_path(unsigned short vendor_id, unsigned short product_id, unsigned short usage_page, unsigned short usage_id, char *result) {
@@ -59,14 +48,8 @@ hid_device *open_device(char *path) {
 
 hid_device *wait_for_device(unsigned short vendor_id, unsigned short product_id, unsigned short usage_page, unsigned short usage_id) {
     hid_device *device = NULL;
-    sigset_t    set;
     char        path[256] = {0};
-    int         sig       = 0;
     int wait_time = 1000;
-    sigemptyset(&set);
-    sigaddset(&set, SIGINT);
-    sigaddset(&set, SIGTERM);
-    pthread_sigmask(SIG_BLOCK, &set, NULL);
     while (device == NULL) {
         find_device_path(vendor_id, product_id, usage_page, usage_id, path);
         if (path[0] != '\0') {
@@ -74,7 +57,7 @@ hid_device *wait_for_device(unsigned short vendor_id, unsigned short product_id,
             device = open_device(path);
         }
         if (device == NULL) {
-            wait_time = MAX((int)(wait_time * 1.2),30000);
+            wait_time = MAX((int)(wait_time * 1.2),3000);
             sleep_for_ms(wait_time);
         }
         sig = check_signal(&set);

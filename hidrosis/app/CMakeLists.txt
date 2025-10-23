@@ -7,12 +7,14 @@ include_directories(${PROJECT_NAME} "include/")
 add_executable(${PROJECT_NAME}
     "src/main.c"
     "src/layout/linux.c" "src/layout/x11.c" "src/layout/wayland.c" "src/layout/macos.c" "src/layout/windows.c" "src/layout/util.c"
-    "src/log/unix.c" "src/log/log.c" "src/log/util.c" "src/log/windows.c"
+    "src/log/unix.c" "src/log/log.c" "src/log/util.c" "src/log/windows.c" "src/signal_control.c"
     "src/os_type.c"
     "src/util.c"
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE hidapi::hidapi)
 target_link_libraries(${PROJECT_NAME} PRIVATE cjson)
+
+add_compile_definitions(${PROJECT_NAME} PRIVATE _GNU_SOURCE)
 
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)

@@ -1,0 +1,230 @@
+[
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/hidapi/src/linux",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -fPIC -o CMakeFiles/hidapi_hidraw.dir/hid.c.o -c /home/user/Projects/daktylos/hidrosis/libs/hidapi/linux/hid.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/hidapi/linux/hid.c",
+  "output": "libs/hidapi/src/linux/CMakeFiles/hidapi_hidraw.dir/hid.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/cjson.dir/cJSON.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/cJSON.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/cJSON.c",
+  "output": "libs/cjson/CMakeFiles/cjson.dir/cJSON.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/cJSON_test.dir/test.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/test.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/test.c",
+  "output": "libs/cjson/CMakeFiles/cJSON_test.dir/test.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -Wno-error -fvisibility=default -Wno-switch-enum -o CMakeFiles/unity.dir/unity/src/unity.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/unity/src/unity.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/unity/src/unity.c",
+  "output": "libs/cjson/tests/CMakeFiles/unity.dir/unity/src/unity.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/parse_examples.dir/parse_examples.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_examples.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_examples.c",
+  "output": "libs/cjson/tests/CMakeFiles/parse_examples.dir/parse_examples.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/parse_number.dir/parse_number.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_number.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_number.c",
+  "output": "libs/cjson/tests/CMakeFiles/parse_number.dir/parse_number.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/parse_hex4.dir/parse_hex4.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_hex4.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_hex4.c",
+  "output": "libs/cjson/tests/CMakeFiles/parse_hex4.dir/parse_hex4.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/parse_string.dir/parse_string.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_string.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_string.c",
+  "output": "libs/cjson/tests/CMakeFiles/parse_string.dir/parse_string.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/parse_array.dir/parse_array.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_array.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_array.c",
+  "output": "libs/cjson/tests/CMakeFiles/parse_array.dir/parse_array.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/parse_object.dir/parse_object.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_object.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_object.c",
+  "output": "libs/cjson/tests/CMakeFiles/parse_object.dir/parse_object.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/parse_value.dir/parse_value.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_value.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_value.c",
+  "output": "libs/cjson/tests/CMakeFiles/parse_value.dir/parse_value.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/print_string.dir/print_string.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/print_string.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/print_string.c",
+  "output": "libs/cjson/tests/CMakeFiles/print_string.dir/print_string.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/print_number.dir/print_number.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/print_number.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/print_number.c",
+  "output": "libs/cjson/tests/CMakeFiles/print_number.dir/print_number.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/print_array.dir/print_array.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/print_array.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/print_array.c",
+  "output": "libs/cjson/tests/CMakeFiles/print_array.dir/print_array.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/print_object.dir/print_object.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/print_object.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/print_object.c",
+  "output": "libs/cjson/tests/CMakeFiles/print_object.dir/print_object.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/print_value.dir/print_value.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/print_value.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/print_value.c",
+  "output": "libs/cjson/tests/CMakeFiles/print_value.dir/print_value.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/misc_tests.dir/misc_tests.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/misc_tests.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/misc_tests.c",
+  "output": "libs/cjson/tests/CMakeFiles/misc_tests.dir/misc_tests.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/parse_with_opts.dir/parse_with_opts.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_with_opts.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/parse_with_opts.c",
+  "output": "libs/cjson/tests/CMakeFiles/parse_with_opts.dir/parse_with_opts.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/compare_tests.dir/compare_tests.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/compare_tests.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/compare_tests.c",
+  "output": "libs/cjson/tests/CMakeFiles/compare_tests.dir/compare_tests.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/cjson_add.dir/cjson_add.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/cjson_add.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/cjson_add.c",
+  "output": "libs/cjson/tests/CMakeFiles/cjson_add.dir/cjson_add.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/readme_examples.dir/readme_examples.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/readme_examples.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/readme_examples.c",
+  "output": "libs/cjson/tests/CMakeFiles/readme_examples.dir/readme_examples.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/tests",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/minify_tests.dir/minify_tests.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/tests/minify_tests.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/tests/minify_tests.c",
+  "output": "libs/cjson/tests/CMakeFiles/minify_tests.dir/minify_tests.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/fuzzing",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/fuzz_main.dir/fuzz_main.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/fuzzing/fuzz_main.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/fuzzing/fuzz_main.c",
+  "output": "libs/cjson/fuzzing/CMakeFiles/fuzz_main.dir/fuzz_main.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/libs/cjson/fuzzing",
+  "command": "/usr/bin/cc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES   -std=c89 -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wmissing-variable-declarations -Wswitch-enum -fvisibility=hidden -std=gnu11 -o CMakeFiles/fuzz_main.dir/cjson_read_fuzzer.c.o -c /home/user/Projects/daktylos/hidrosis/libs/cjson/fuzzing/cjson_read_fuzzer.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/libs/cjson/fuzzing/cjson_read_fuzzer.c",
+  "output": "libs/cjson/fuzzing/CMakeFiles/fuzz_main.dir/cjson_read_fuzzer.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/main.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/main.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/main.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/main.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/layout/linux.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/layout/linux.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/layout/linux.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/layout/linux.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/layout/x11.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/layout/x11.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/layout/x11.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/layout/x11.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/layout/wayland.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/layout/wayland.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/layout/wayland.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/layout/wayland.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/layout/macos.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/layout/macos.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/layout/macos.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/layout/macos.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/layout/windows.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/layout/windows.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/layout/windows.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/layout/windows.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/layout/util.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/layout/util.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/layout/util.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/layout/util.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/log/unix.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/log/unix.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/log/unix.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/log/unix.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/log/log.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/log/log.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/log/log.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/log/log.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/log/util.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/log/util.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/log/util.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/log/util.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/log/windows.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/log/windows.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/log/windows.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/log/windows.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/signal.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/signal.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/signal.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/signal.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/os_type.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/os_type.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/os_type.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/os_type.c.o"
+},
+{
+  "directory": "/home/user/Projects/daktylos/hidrosis/build/app",
+  "command": "/usr/bin/cc  -I/home/user/Projects/daktylos/hidrosis/app/hidrosis -I/home/user/Projects/daktylos/hidrosis/app/include -I/home/user/Projects/daktylos/hidrosis/libs/hidapi/hidapi -std=gnu11 -o CMakeFiles/hidrosis.dir/src/util.c.o -c /home/user/Projects/daktylos/hidrosis/app/src/util.c",
+  "file": "/home/user/Projects/daktylos/hidrosis/app/src/util.c",
+  "output": "app/CMakeFiles/hidrosis.dir/src/util.c.o"
+}
+]

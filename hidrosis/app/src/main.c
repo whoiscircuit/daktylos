@@ -1,14 +1,12 @@
-#include <signal.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <hidapi.h>
 #include <string.h>
 #include <wchar.h>
+#include "signal_control.h"
 #include "layout.h"
 #include "os_type.h"
 #include "util.h"
 #include "log.h"
-#include <cjson/cJSON.h>
 
 #define KEYBOARD_VID 0x4649
 #define KEYBOARD_PID 0x0721
@@ -32,8 +30,6 @@ int main() {
     log_set_level(LOG_LEVEL_TRACE);
     LOG_INFO("starting hidrosis service...");
 
-    sigset_t set;
-    int sig;
     int         res;
     hid_device *device = NULL;
     wchar_t     wstr[MAX_STR];
@@ -41,10 +37,7 @@ int main() {
     memset(report.buf, 0, REPORT_SIZE + 1);
 
     LOG_TRACE("setting up signal handlers...");
-    sigemptyset(&set);
-    sigaddset(&set, SIGINT);
-    sigaddset(&set, SIGTERM);
-    pthread_sigmask(SIG_BLOCK, &set, NULL);
+    signal_init();
 
     LOG_DEBUG("initializing hidapi library...");
     res = hid_init();

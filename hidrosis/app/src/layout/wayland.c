@@ -5,8 +5,10 @@
 #include <unistd.h>
 #include <string.h>
 #include "layout.h"
+#include "log.h"
 
 int wayland_init_keyboard_layout(){
+    LOG_FATAL("testing");
     return 0;
 }
 
