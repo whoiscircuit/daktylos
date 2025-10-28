@@ -279,7 +279,7 @@ enum KEYBOARD_LAYOUT {
 };
 
 typedef union {
-    uint16_t raw;
+    uint32_t raw;
     struct {
         union {
             uint8_t raw;
@@ -290,10 +290,10 @@ typedef union {
             };
         } oled;
         union {
-            uint8_t raw;
+            uint16_t raw;
             struct {
-                unsigned os_type : 2;
-                unsigned active_layout : 2;
+                uint8_t os_type;
+                uint8_t active_layout;
             };
         } hid;
     };
@@ -311,7 +311,7 @@ typedef union {
 user_config_t user_config;
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
-    state.hid.raw = *(uint8_t *)data;
+    state.hid.raw = *(uint16_t *)data;
 }
 
 void setup_config(void) {
@@ -326,7 +326,7 @@ void user_config_sync_slave_handler(uint8_t in_buflen, const void *sync_data, ui
 }
 
 void state_sync_slave_handler(uint8_t in_buflen, const void *sync_data, uint8_t out_buflen, void *out_data) {
-    state.raw = *(uint16_t *)sync_data;
+    state.raw = *(uint32_t *)sync_data;
 }
 
 void keyboard_post_init_user() {

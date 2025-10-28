@@ -20,8 +20,8 @@ typedef union {
     unsigned char buf[REPORT_SIZE + 1];
     struct {
         uint8_t   report_id; // should always be 0x00
-        os_type_t os_type : 2;
-        unsigned  active_layout : 2;
+        uint8_t os_type;
+        uint8_t  active_layout;
     };
 } HIDReport;
 
