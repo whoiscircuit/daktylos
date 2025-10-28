@@ -17,7 +17,7 @@ int platform_enable_virtual_terminal(void) {
 }
 
 int platform_log_init(const char *ident) {
-    g_ident = ident ? strdup(ident) : strdup("service");
+    g_ident = ident ? strdup(ident) : strdup("hidrosis-service");
     openlog(g_ident, LOG_PID | LOG_NDELAY, LOG_DAEMON);
     return 0;
 }

@@ -4,7 +4,7 @@
 #include <string.h>
 
 static log_level_t g_level     = LOG_LEVEL_INFO;
-static char        g_ident[64] = "service";
+static char        g_ident[64] = "hidrosis-service";
 static int         g_colors    = -1; // -1 = auto-detect, 0 = off, 1 = on
 
 static const char *level_color(log_level_t lvl) {
