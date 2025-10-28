@@ -2,7 +2,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 
 static log_level_t g_level     = LOG_LEVEL_INFO;
 static char        g_ident[64] = "service";
@@ -72,11 +71,9 @@ void log_log(log_level_t lvl, const char *fmt, ...) {
     vsnprintf(user_msg, sizeof(user_msg), fmt, ap);
     va_end(ap);
 
-    pid_t pid = (pid_t)getpid();
-
     // plain message for platform backends (no color)
     char plain[1400];
-    snprintf(plain, sizeof(plain), "%s [%s] (pid:%d): %s", ts, get_log_level_name(lvl), (int)pid, user_msg);
+    snprintf(plain, sizeof(plain), "%s [%s]: %s", ts, get_log_level_name(lvl), user_msg);
 
     // colored message for stderr output (if enabled)
     if (g_colors) {

@@ -7,7 +7,6 @@
 #include "os_type.h"
 #include "util.h"
 #include "log.h"
-#include <signal.h>
 
 #define KEYBOARD_VID 0x4649
 #define KEYBOARD_PID 0x0721
@@ -32,6 +31,7 @@ int main() {
     LOG_INFO("starting hidrosis service...");
 
     int         res;
+    int sig;
     hid_device *device = NULL;
     wchar_t     wstr[MAX_STR];
     HIDReport   report;
@@ -123,8 +123,8 @@ int main() {
                 should_update = false;
             }
         }
-        sig = check_signal(&set);
-        if (sig == SIGINT || sig == SIGTERM){
+        sig = check_signal();
+        if (sig){
             LOG_WARN("termination signal received, quitting...");
             break;
         }

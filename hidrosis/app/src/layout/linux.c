@@ -1,3 +1,4 @@
+#ifdef __unix__
 #include <stdlib.h>
 #include "layout.h"
 
@@ -25,3 +26,4 @@ keyboard_layout_t get_keyboard_layout(void) {
         return x11_get_keyboard_layout();
     }
 }
+#endif

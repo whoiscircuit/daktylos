@@ -5,6 +5,7 @@
 #include <X11/extensions/XKBstr.h>
 #include "layout.h"
 #include "log.h"
+#include "util.h"
 
 static int x11_error_handler(Display *dpy, XErrorEvent *error) {
     char buf[256];

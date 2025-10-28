@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include "hidapi.h"
 #include "log.h"
-#include <signal.h>
 #include "signal_control.h"
 #ifdef _WIN32
 #    include <windows.h>
@@ -49,6 +48,7 @@ hid_device *open_device(char *path) {
 hid_device *wait_for_device(unsigned short vendor_id, unsigned short product_id, unsigned short usage_page, unsigned short usage_id) {
     hid_device *device = NULL;
     char        path[256] = {0};
+    int sig;
     int wait_time = 1000;
     while (device == NULL) {
         find_device_path(vendor_id, product_id, usage_page, usage_id, path);
@@ -60,8 +60,8 @@ hid_device *wait_for_device(unsigned short vendor_id, unsigned short product_id,
             wait_time = MIN((int)(wait_time * 1.2),30000);
             sleep_for_ms(wait_time);
         }
-        sig = check_signal(&set);
-        if (sig == SIGINT || sig == SIGTERM){
+        sig = check_signal();
+        if (sig){
             LOG_WARN("termination signal received, quitting...");
             break;
         }
