@@ -4,13 +4,19 @@ project(hidrosis C)
 
 include_directories(${PROJECT_NAME} "include/")
 
-add_executable(${PROJECT_NAME}
-    "src/main.c"
+SET(C_FILES "src/main.c"
     "src/layout/linux.c" "src/layout/x11.c" "src/layout/wayland.c" "src/layout/macos.c" "src/layout/windows.c" "src/layout/util.c"
     "src/log/unix.c" "src/log/log.c" "src/log/util.c" "src/log/windows.c"
     "src/os_type.c" "src/signal_control/unix.c" "src/signal_control/windows.c"
-    "src/util.c"
-)
+    "src/util.c")
+
+if(WIN32)
+    add_executable(${PROJECT_NAME} WIN32 ${C_FILES})
+else()
+    add_executable(${PROJECT_NAME} ${C_FILES})
+endif()
+
+
 target_link_libraries(${PROJECT_NAME} PRIVATE hidapi::hidapi)
 target_link_libraries(${PROJECT_NAME} PRIVATE cjson)
 

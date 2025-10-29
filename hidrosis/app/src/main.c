@@ -141,3 +141,19 @@ int main() {
 
     return 0;
 }
+
+
+
+#ifdef _WIN32
+#include <windows.h>
+
+int WINAPI WinMain(
+    HINSTANCE hInstance,      // Handle to current instance of the app
+    HINSTANCE hPrevInstance,  // Always NULL in Win32
+    LPSTR lpCmdLine,          // Command line arguments as string (excluding program name)
+    int nCmdShow              // Window show state (SW_HIDE, SW_SHOW, etc.)
+)
+{
+    return main();
+}
+#endif
