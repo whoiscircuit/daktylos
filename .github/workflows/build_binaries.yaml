@@ -101,12 +101,26 @@ jobs:
           cmake -G "Visual Studio 17 2022" -DCMAKE_POLICY_VERSION_MINIMUM="3.5" ..
           cmake --build . --config Release
       - name: Create the installer using nsis and .nsi script at packaging/windows
+        id: build_windows
         run: |
+          $WIN_DIR = New-Item -ItemType Directory -Path ([System.IO.Path]::GetTempPath() + [System.Guid]::NewGuid().ToString())
+          echo "WIN_DIR=$($WIN_DIR.FullName)" >> $env:GITHUB_OUTPUT
           cd hidrosis
           ls
           ls packaging/windows
           C:\"Program Files (x86)"\NSIS\makensis.exe packaging\windows\installer.nsi
-
+          cp packaging/windows/Hidrosis-Installer.exe $WIN_DIR
+          cp build/app/Release/hidrosis.exe $WIN_DIR
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hidrosis-Installer.exe
+          path: ${{ steps.build_windows.outputs.WIN_DIR }}/Hidrosis-Installer.exe
+      - name: Upload Windows Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: hidrosis.exe
+          path: ${{ steps.build_windows.outputs.WIN_DIR }}/hidrosis.exe
   release:
     needs: [build_linux,build_windows]   # Wait for build jobs
     runs-on: ubuntu-latest
@@ -128,7 +142,13 @@ jobs:
       - name: Download Windows build
         uses: actions/download-artifact@v4
         with:
-          name: windows.exe
+          name: Hidrosis-Installer.exe
+          path: dist/
+
+      - name: Download Windows build
+        uses: actions/download-artifact@v4
+        with:
+          name: hidrosis.exe
           path: dist/
 
       - name: Get timestamp
@@ -167,6 +187,27 @@ jobs:
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Windows installer
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/Hidrosis-Installer.exe
+          asset_name: Hidrosis-Installer.exe
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Windows executable
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/hidrosis.exe
+          asset_name: hidrosis.exe
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 #   publish:
 #     name: 'QMK Userspace Publish'
 #     uses: qmk/.github/.github/workflows/qmk_userspace_publish.yml@main
