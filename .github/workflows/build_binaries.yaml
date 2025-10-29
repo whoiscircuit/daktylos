@@ -103,8 +103,10 @@ jobs:
       - name: Create the installer using nsis and .nsi script at packaging/windows
         run: |
           cd hidrosis
+          ls "C:\Program Files (x86)\NSIS"
+          ls
+          ls packaging/windows
           makensis packaging/windows/hidrosis.nsis
-          find
 
   release:
     needs: [build_linux,build_windows]   # Wait for build jobs
