@@ -81,24 +81,55 @@ jobs:
             name: fedora.rpm
             path: ${{steps.build_linux.outputs.RPM_DIR}}/fedora.rpm
 
+  build_windows:
+    name: 'Hidrosis Windows Build'
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install Dependencies
+        run: |
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+          choco install visualstudio2022community --package-parameters "--add Microsoft.VisualStudio.Workload.ManagedDesktop"
+          choco install nsis
+      - name: Build Hidrosis for Windows
+        run: |
+          mkdir -p hidrosis/build
+          cd hidrosis/build
+          cmake -G "Visual Studio 17 2022" -DCMAKE_POLICY_VERSION_MINIMUM="3.5" ..
+          cmake --build . --config Release
+      - name: Create the installer using nsis and .nsi script at packaging/windows
+        run: |
+          cd hidrosis
+          makensis packaging/windows/hidrosis.nsis
+          find
+
   release:
-    needs: [build_linux]   # Wait for build jobs
+    needs: [build_linux,build_windows]   # Wait for build jobs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Download Linux build
+      - name: Download Debian build
         uses: actions/download-artifact@v4
         with:
           name: debian.deb
           path: dist/
 
-      - name: Download Linux build
+      - name: Download Fedora build
         uses: actions/download-artifact@v4
         with:
           name: fedora.rpm
           path: dist/
-        
+
+      - name: Download Windows build
+        uses: actions/download-artifact@v4
+        with:
+          name: windows.exe
+          path: dist/
+
       - name: Get timestamp
         id: ts
         run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
