@@ -105,7 +105,7 @@ jobs:
           cd hidrosis
           ls
           ls packaging/windows
-          C:\"Program Files (x86)"\NSIS\makensis.exe packaging\windows\hidrosis.nsis
+          C:\"Program Files (x86)"\NSIS\makensis.exe packaging\windows\installer.nsi
 
   release:
     needs: [build_linux,build_windows]   # Wait for build jobs
