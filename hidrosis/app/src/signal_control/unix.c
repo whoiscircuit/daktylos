@@ -17,7 +17,7 @@ int check_signal() {
     if (sigpending(&pending) == -1) return -1;
 
     for (int sig = 1; sig < NSIG; sig++) {
-        if (sigismember(set, sig) && sigismember(&pending, sig)) {
+        if (sigismember(&set, sig) && sigismember(&pending, sig)) {
             return 1;
         }
     }
