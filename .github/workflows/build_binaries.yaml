@@ -6,12 +6,12 @@ permissions:
   contents: write
 
 jobs:
-#   build_qmk:
-#     name: 'QMK Userspace Build'
-#     uses: qmk/.github/.github/workflows/qmk_userspace_build.yml@main
-#     with:
-#       qmk_repo: qmk/qmk_firmware
-#       qmk_ref: master
+  build_qmk:
+    name: 'QMK Userspace Build'
+    uses: qmk/.github/.github/workflows/qmk_userspace_build.yml@main
+    with:
+      qmk_repo: qmk/qmk_firmware
+      qmk_ref: master
   build_linux:
     name: 'Hidrosis Linux Build'
     runs-on: ubuntu-latest
@@ -122,7 +122,7 @@ jobs:
           name: hidrosis.exe
           path: ${{ steps.build_windows.outputs.WIN_DIR }}/hidrosis.exe
   release:
-    needs: [build_linux,build_windows]   # Wait for build jobs
+    needs: [build_linux,build_windows,build_qmk]   # Wait for build jobs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -150,6 +150,16 @@ jobs:
         with:
           name: hidrosis.exe
           path: dist/
+      
+      - name: Download QMK Binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: Firmware
+
+      - name: Figuring out where is the QMK binary
+        run: |
+          ls
+          ls Firmware
 
       - name: Get timestamp
         id: ts
@@ -207,6 +217,16 @@ jobs:
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # - name: Upload QMK Binaries
+      #   uses: actions/upload-release-asset@v1
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: dist/.exe
+      #     asset_name: hidrosis.exe
+      #     asset_content_type: application/octet-stream
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 #   publish:
 #     name: 'QMK Userspace Publish'
