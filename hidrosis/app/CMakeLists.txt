@@ -11,7 +11,11 @@ SET(C_FILES "src/main.c"
     "src/util.c")
 
 if(WIN32)
-    add_executable(${PROJECT_NAME} WIN32 ${C_FILES})
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        add_executable(${PROJECT_NAME} WIN32 ${C_FILES})
+    else()
+        add_executable(${PROJECT_NAME} ${C_FILES})
+    endif()
 else()
     add_executable(${PROJECT_NAME} ${C_FILES})
 endif()
@@ -28,7 +32,7 @@ if(UNIX AND NOT APPLE)
     pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client)
     pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
     find_library(XKBFILE_LIB xkbfile REQUIRED)
-    target_link_libraries(${PROJECT_NAME} PRIVATE
+    target_ink_libraries(${PROJECT_NAME} PRIVATE
         ${X11_LIBRARIES}
         ${WAYLAND_CLIENT_LIBRARIES}
         ${XKBFILE_LIB}

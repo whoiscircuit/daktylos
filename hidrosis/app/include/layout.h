@@ -3,6 +3,8 @@
 typedef enum {
     LAYOUT_ENGLISH = 0,
     LAYOUT_FARSI = 1,
+    LAYOUT_INTERNATIONAL = 2,
+    LAYOUT_INTERNATIONAL_WITHOUT_DEAD_KEYS = 3,
     LAYOUT_UNKNOWN = -1
 } keyboard_layout_t;
 

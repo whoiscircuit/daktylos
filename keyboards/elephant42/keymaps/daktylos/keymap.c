@@ -5,8 +5,10 @@
 #include "transactions.h"
 
 enum layer_names {
-    _COLEMAKDH,
-    _FARSI,
+    _COLEMAKDH = 0,
+    _FARSI = 1,
+    _COLEMAKDH_INTL = 2,
+    _ACCENT,
     _COLEMAKDH_OVERLAY,
     NUM,
     FUN,
@@ -48,6 +50,11 @@ enum layer_names {
 #define MT_RALT_L MT(MOD_RALT, KC_L)
 #define MT_RGUI_SCLN MT(MOD_RGUI, KC_SCLN)
 
+// for colemakdh international
+#define MT_RALT_G MT(MOD_RALT, KC_G)
+#define MT_RALT_M MT(MOD_RALT, KC_M)
+#define MT_LALT_I MT(MOD_LALT, KC_I)
+
 #define MOD_MASK_RIGHT (0xF0)
 #define MOD_MASK_LEFT (0x0F)
 
@@ -63,6 +70,14 @@ enum custom_keycodes {
 #define GET_MOD_FROM_TAP_HOLD(tap_hold_keycode) (((tap_hold_keycode) & 0x0F00) >> 8)
 #define GET_LAYER_FROM_TAP_HOLD(tap_hold_keycode) (((tap_hold_keycode) & 0x0F00) >> 8)
 #define GET_KEYCODE_FROM_TAP_HOLD(tap_hold_keycode) ((tap_hold_keycode) & 0xFF)
+
+
+
+// accented characters
+#define KC_A_UMLAUT RALT(KC_Q)
+#define KC_O_UMLAUT RALT(KC_P)
+#define KC_U_UMLAUT RALT(KC_Y)
+#define KC_SS RALT(KC_S)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -97,6 +112,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                        KC_F13    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,   MY_MENU
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
+  [_COLEMAKDH_INTL] = LAYOUT(
+  //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
+         KC_GRV    ,     KC_Q     ,     KC_W     ,     KC_F     ,     KC_P     ,     KC_B     ,        KC_J     ,     KC_L     ,     KC_U     ,     KC_Y     ,   KC_DQUO    ,   KC_UNDS    ,
+  //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
+        KC_SLSH    ,   MT_LGUI_A  ,   MT_LALT_R  ,   MT_LCTL_S  ,   MT_LSFT_T  ,  MT_RALT_G   ,     MT_RALT_M   ,   MT_RSFT_N  ,   MT_RCTL_E  ,   MT_LALT_I  ,   MT_RGUI_O  ,   KC_EQUAL   ,
+  //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
+                         KC_Z     ,     KC_X     ,     KC_C     ,     KC_D     ,     KC_V     ,        KC_K     ,     KC_H     ,    KC_COMM   ,    KC_DOT    ,   KC_SCLN    ,
+  //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
+                                       KC_F13    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,   MY_MENU
+  //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
+  ),
   [_FARSI] = LAYOUT(
   //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
          KC_GRV    ,     KC_Q     ,     KC_W     ,     KC_E     ,     KC_R     ,     KC_T     ,        KC_Y     ,     KC_U     ,     KC_I     ,     KC_O     ,     KC_P     ,   KC_UNDS    ,
@@ -106,6 +132,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                          KC_Z     ,     KC_X     ,     KC_C     ,     KC_V     ,     KC_B     ,        KC_N     ,     KC_M     ,   KC_COMM    ,    KC_DOT    ,   KC_QUOTE   ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
                                        KC_F13    ,  LT_MED_ESC  ,  LT_NAV_SPC  ,  LT_MOS_TAB  ,     LT_NUM_ENT  , LT_SYM_BSPC  ,  LT_FUN_DEL  ,   MY_MENU
+  //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
+  ),
+  [_ACCENT] = LAYOUT(
+  //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
+        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,  KC_U_UMLAUT ,   XXXXXXX    ,  KC_O_UMLAUT ,   XXXXXXX    ,   XXXXXXX    ,
+  //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
+        XXXXXXX    ,  KC_A_UMLAUT ,    KC_SS     ,   XXXXXXX    ,   _______    ,   _______    ,      _______    ,   _______    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
+  //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
+                       XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
+  //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
+                                      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [_COLEMAKDH_OVERLAY] = LAYOUT(
@@ -276,6 +313,8 @@ enum OS_TYPES {
 enum KEYBOARD_LAYOUT {
     LAYOUT_ENGLISH = 0,
     LAYOUT_FARSI   = 1,
+    LAYOUT_INTERNATIONAL = 2,
+    LAYOUT_INTERNATIONAL_WITHOUT_DEAD_KEYS = 3
 };
 
 typedef union {
@@ -440,7 +479,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->event.pressed) {
                 switch (state.oled.mode) {
                     case OLED_MENU:
-                        set_single_default_layer(state.hid.active_layout == LAYOUT_ENGLISH ? _COLEMAKDH : _FARSI);
+                        switch (state.hid.active_layout) {
+                            case LAYOUT_ENGLISH:
+                                set_single_default_layer(_COLEMAKDH);
+                                break;
+                            case LAYOUT_FARSI:
+                                set_single_default_layer(_FARSI);
+                                break;
+                            case LAYOUT_INTERNATIONAL:
+                                set_single_default_layer(_COLEMAKDH_INTL);
+                                break;
+                        }
                         state.oled.mode = OLED_OFF;
                         break;
                     case OLED_PREFS:
@@ -603,6 +652,8 @@ bool oled_task_user(void) {
                     case LAYOUT_FARSI:
                         oled_write_P(PSTR("\x5F\x11\x0C\x1D\x5F"), false);
                         break;
+                    case LAYOUT_INTERNATIONAL:
+                        oled_write_P(PSTR("\x5F\x14\x19\x1F\x5F"), false);
                 }
             } else {
                 oled_write_P(PSTR("\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F"), state.oled.menu_index == MENU_JOYSTICK);
@@ -676,6 +727,22 @@ void housekeeping_task_user(void) {
             transaction_rpc_send(STATE_SYNC, sizeof(state.raw), &state.raw);
             last_sync = timer_read32();
         }
-        if(state.oled.mode == OLED_OFF) set_single_default_layer(state.hid.active_layout);
+        if(state.oled.mode == OLED_OFF){
+            switch (state.hid.active_layout)
+            {
+            case LAYOUT_ENGLISH:
+                set_single_default_layer(_COLEMAKDH);
+                break;
+            case LAYOUT_FARSI:
+                set_single_default_layer(_FARSI);
+                break;
+            case LAYOUT_INTERNATIONAL:
+            case LAYOUT_INTERNATIONAL_WITHOUT_DEAD_KEYS:
+                set_single_default_layer(_COLEMAKDH_INTL);
+                break;
+            default:
+                break;
+            }
+        }
     }
 }
