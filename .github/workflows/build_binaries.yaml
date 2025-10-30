@@ -156,11 +156,6 @@ jobs:
         with:
           name: Firmware
 
-      - name: Figuring out where is the QMK binary
-        run: |
-          ls
-          ls Firmware
-
       - name: Get timestamp
         id: ts
         run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
@@ -218,15 +213,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      # - name: Upload QMK Binaries
-      #   uses: actions/upload-release-asset@v1
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: dist/.exe
-      #     asset_name: hidrosis.exe
-      #     asset_content_type: application/octet-stream
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload QMK Binaries
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: elephant42_daktylos.hex
+          asset_name: elephant42_daktylos.hex
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 #   publish:
 #     name: 'QMK Userspace Publish'
