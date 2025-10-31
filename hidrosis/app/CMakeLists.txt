@@ -32,7 +32,7 @@ if(UNIX AND NOT APPLE)
     pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client)
     pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
     find_library(XKBFILE_LIB xkbfile REQUIRED)
-    target_ink_libraries(${PROJECT_NAME} PRIVATE
+    target_link_libraries(${PROJECT_NAME} PRIVATE
         ${X11_LIBRARIES}
         ${WAYLAND_CLIENT_LIBRARIES}
         ${XKBFILE_LIB}
