@@ -72,12 +72,6 @@ int main() {
         LOG_DEBUG("Detected OS type: %s", os_type_to_string(report.os_type));
     }
 
-    res = init_keyboard_layout();
-    if(res != 0){
-        LOG_FATAL("a fatal problem occured during initlaization of keyboard layout setup.");
-        return -1;
-    }
-
     LOG_INFO("Starting main loop...");
     bool should_update = true;
     int wait_time = 200;
@@ -133,7 +127,6 @@ int main() {
 
     hid_close(device);
     res = hid_exit();
-    close_keyboard_layout();
     if (res == -1) {
         LOG_ERROR("Failed to exit hidapi library safely. quitting anyways.");
         return 1;

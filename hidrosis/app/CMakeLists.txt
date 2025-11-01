@@ -5,7 +5,7 @@ project(hidrosis C)
 include_directories(${PROJECT_NAME} "include/")
 
 SET(C_FILES "src/main.c"
-    "src/layout/linux.c" "src/layout/x11.c" "src/layout/wayland.c" "src/layout/macos.c" "src/layout/windows.c" "src/layout/util.c"
+    "src/layout/linux.c" "src/layout/x11.c" "src/layout/hyprland.c" "src/layout/macos.c" "src/layout/windows.c" "src/layout/util.c"
     "src/log/unix.c" "src/log/log.c" "src/log/util.c" "src/log/windows.c"
     "src/os_type.c" "src/signal_control/unix.c" "src/signal_control/windows.c"
     "src/util.c")

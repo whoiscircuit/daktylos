@@ -3,16 +3,6 @@
 #    include <stdio.h>
 #    include "layout.h"
 #include "util.h"
-
-int init_keyboard_layout(){
-    return 0;
-}
-
-void close_keyboard_layout(){
-    
-}
-
-
 #include <windows.h>
 #include <stdio.h>
 
@@ -49,8 +39,6 @@ int get_keyboard_layout() {
             RegCloseKey(hKey);
         }
     }
-
-    printf("Layout: %s\n", langName);
     return get_layout_from_string(langName);
 }
 #endif

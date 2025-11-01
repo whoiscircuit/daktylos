@@ -14,7 +14,12 @@ static void tolowercase(char* str){
 int get_layout_from_string(char* str){
     tolowercase(str);
     if(strstr(str,"persian") || strstr(str,"farsi")){
-        return LAYOUT_FARSI;
+        if(strstr(str,"standard")){
+            return LAYOUT_FARSI_STANDARD;
+        }
+        else {
+            return LAYOUT_FARSI;
+        }
     }
     else if(strstr(str,"international") && strstr(str,"altgr")) {
         return LAYOUT_INTERNATIONAL_WITHOUT_DEAD_KEYS;
@@ -40,6 +45,8 @@ const char* layout_to_string(keyboard_layout_t layout){
         case LAYOUT_INTERNATIONAL_WITHOUT_DEAD_KEYS:
             return "English International (without dead keys)";
             break;
+        case LAYOUT_FARSI_STANDARD:
+            return "Farsi Standard";
         case LAYOUT_FARSI:
             return "Farsi";
         default:

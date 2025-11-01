@@ -19,49 +19,44 @@ Display* g_display = NULL;
 XkbDescRec *g_kbd = NULL;
 
 
-int x11_init_keyboard_layout(){
-    XSetErrorHandler(x11_error_handler);
-    g_display = XOpenDisplay(NULL);
-    if (!g_display) {
-        LOG_ERROR("Failed to open X display\n");
-        return -1;
-    }
-    g_kbd = XkbAllocKeyboard();
-    if (!g_kbd) {
-        XCloseDisplay(g_display);
-        return -1;
-    }
-    return 0;
-}
-
-
 keyboard_layout_t x11_get_keyboard_layout() {
+
+    XSetErrorHandler(x11_error_handler);
+    if(!g_display){
+        g_display = XOpenDisplay(NULL);
+        if (!g_display) {
+            LOG_ERROR("Failed to open X display\n");
+            return LAYOUT_UNKNOWN;
+        }
+    }
+    if(!g_kbd){
+        g_kbd = XkbAllocKeyboard();
+        if (!g_kbd) {
+            XCloseDisplay(g_display);
+            return LAYOUT_UNKNOWN;
+        }
+    }
     int device_id = XkbUseCoreKbd;
 
     g_kbd->dpy = g_display;
     if (XkbGetNames(g_display, XkbGroupNamesMask, g_kbd) != Success) {
-        return -1;
+        return LAYOUT_UNKNOWN;
     }
 
     XkbStateRec state;
     if (XkbGetState(g_display, device_id, &state) != Success) {
-        return -1;
+        return LAYOUT_UNKNOWN;
     }
 
     char *layout = XGetAtomName(g_display, g_kbd->names->groups[state.group]);
     if (!layout) {
-        return -1;
+        return LAYOUT_UNKNOWN;
     }
 
     keyboard_layout_t result = get_layout_from_string(layout);
 
     XFree(layout);
     return result;
-}
-
-void x11_close_keyboard_layout(){
-    XkbFreeKeyboard(g_kbd, 0, True);
-    XCloseDisplay(g_display);
 }
 
 #endif
