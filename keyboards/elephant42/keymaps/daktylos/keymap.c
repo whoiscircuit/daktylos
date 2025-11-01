@@ -54,6 +54,8 @@ enum layer_names {
 #define LT_ACCENT_G LT(ACCENT, KC_G)
 #define LT_ACCENT_M LT(ACCENT, KC_M)
 #define MT_LALT_I MT(MOD_LALT, KC_I)
+#define LM_NUM LM(NUM,MOD_RALT)
+#define LM_SYM LM(SYM,MOD_RALT)
 
 #define MOD_MASK_RIGHT (0xF0)
 #define MOD_MASK_LEFT (0x0F)
@@ -142,7 +144,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
                        XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
-                                      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX
+                                      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,       LM_NUM    ,    LM_SYM    ,   XXXXXXX    ,   XXXXXXX
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
   [_COLEMAKDH_OVERLAY] = LAYOUT(
