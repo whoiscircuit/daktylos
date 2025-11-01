@@ -1,8 +1,8 @@
 #ifdef __linux__
 #include <stdio.h>
-#include <cJSON.h>
-#include <layout.h>
-#include <log.h>
+#include "cjson/cJSON.h"
+#include "layout.h"
+#include "log.h"
 
 char *exec_cmd(const char *cmd) {
     FILE *fp;
