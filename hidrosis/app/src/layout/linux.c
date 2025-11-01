@@ -1,6 +1,8 @@
 #ifdef __unix__
 #include <stdlib.h>
 #include "layout.h"
+#include <string.h>
+#include "log.h"
 
 keyboard_layout_t get_keyboard_layout(void) {
     const char *val = getenv("WAYLAND_DISPLAY");
