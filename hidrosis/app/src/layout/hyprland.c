@@ -3,6 +3,8 @@
 #include "cjson/cJSON.h"
 #include "layout.h"
 #include "log.h"
+#include <string.h>
+#include <stdlib.h>
 
 char *exec_cmd(const char *cmd) {
     FILE *fp;
