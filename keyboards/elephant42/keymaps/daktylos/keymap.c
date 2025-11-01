@@ -280,10 +280,23 @@ const key_override_t override_shift_dot_is_right_parenthesis  = ko_make_basic(MO
 const key_override_t override_persian_shift_kaf_is_gaf        = ko_make_with_layers(MOD_MASK_SHIFT, KC_SCLN, KC_QUOT, 1 << _FARSI);
 const key_override_t override_persian_shift_khe_is_jim        = ko_make_with_layers(MOD_MASK_SHIFT, KC_O, KC_LBRC, 1 << _FARSI);
 const key_override_t override_persian_shift_he_is_che         = ko_make_with_layers(MOD_MASK_SHIFT, KC_P, KC_RBRC, 1 << _FARSI);
+const key_override_t override_persian_p_in_non_standard_keyboard = {
+    .trigger_mods           = NULL,
+    .layers                 = _FARSI,
+    .suppressed_mods        = NULL,
+    .options                = ko_option_defaults,
+    .negative_mod_mask      = (uint8_t) ~(MOD_BIT(KC_RGUI) | MOD_BIT(KC_RALT)),
+    .custom_action          = momentary_layer,
+    .context                = (void *)LAYER_FN,
+    .trigger                = KC_M,
+    .replacement            = KC_SLSH,
+    .enabled                = true
+};
 
 // This globally defines all key overrides to be used
 const key_override_t *key_overrides[] = {
     &override_swap_qoute_and_double_qoute, &override_shift_slash_is_back_slash, &override_swap_minus_and_underscore, &override_shift_dot_is_right_parenthesis, &override_shift_comma_is_left_parenthesis, &override_persian_shift_kaf_is_gaf, &override_persian_shift_he_is_che, &override_persian_shift_khe_is_jim,
+    &override_persian_p_in_non_standard_keyboard
 };
 
 enum OLED_MODE {
