@@ -110,6 +110,15 @@ int main() {
                     }
                     LOG_INFO("keyboard reconnected. continuing...");
                 }
+                else{
+                    LOG_INFO("not sure what is happening. closing and opening the device just in case...");
+                    hid_close(device);
+                    device = wait_for_device(KEYBOARD_VID, KEYBOARD_PID, RAW_USAGE_PAGE, RAW_USAGE_ID);
+                    if(device == NULL){
+                        break;
+                    }
+                    LOG_INFO("keyboard reconnected. continuing...");
+                }
             }
             else {
                 wait_time = 200;

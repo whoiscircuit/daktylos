@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "layout.h"
+#include "os_type.h"
 
 static void tolowercase(char* str){
     char* letter = str;
@@ -14,8 +15,14 @@ static void tolowercase(char* str){
 int get_layout_from_string(char* str){
     tolowercase(str);
     if(strstr(str,"persian") || strstr(str,"farsi")){
-        if(strstr(str,"standard")){
-            return LAYOUT_FARSI_STANDARD;
+        if(get_os_type() == OS_TYPE_WINDOWS && strstr(str,"standard")){
+            return LAYOUT_FARSI;
+        }
+        else if(get_os_type() == OS_TYPE_WINDOWS){
+            return LAYOUT_FARSI_NON_STANDARD;
+        }
+        else if(get_os_type() == OS_TYPE_LINUX && strstr(str,"windows")){
+            return LAYOUT_FARSI_NON_STANDARD;
         }
         else {
             return LAYOUT_FARSI;
@@ -45,10 +52,10 @@ const char* layout_to_string(keyboard_layout_t layout){
         case LAYOUT_INTERNATIONAL_WITHOUT_DEAD_KEYS:
             return "English International (without dead keys)";
             break;
-        case LAYOUT_FARSI_STANDARD:
-            return "Farsi Standard";
         case LAYOUT_FARSI:
             return "Farsi";
+        case LAYOUT_FARSI_NON_STANDARD:
+            return "Farsi (non-standard)";
         default:
             return "Unknown";
     }
