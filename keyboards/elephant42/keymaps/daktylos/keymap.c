@@ -80,6 +80,7 @@ enum custom_keycodes {
 #define KC_O_UMLAUT RALT(KC_P)
 #define KC_U_UMLAUT RALT(KC_Y)
 #define KC_SS RALT(KC_S)
+#define KC_COPYRIGHT RALT(KC_R)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -140,13 +141,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
         XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,  KC_U_UMLAUT ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
   //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
-        KC_PLUS    ,  KC_A_UMLAUT ,   XXXXXXX    ,    KC_SS     ,   _______    ,   _______    ,      _______    ,   _______    ,   XXXXXXX    ,   XXXXXXX    ,  KC_O_UMLAUT ,   XXXXXXX    ,
+        KC_PLUS    ,  KC_A_UMLAUT , KC_COPYRIGHT ,    KC_SS     ,   _______    ,   _______    ,      _______    ,   _______    ,   XXXXXXX    ,   XXXXXXX    ,  KC_O_UMLAUT ,   XXXXXXX    ,
   //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
-                       XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
+                       XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,      XXXXXXX    ,   XXXXXXX    , RALT(KC_LBRC), RALT(KC_RBRC),   XXXXXXX    ,
   //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
                                       XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,       LM_NUM    ,    LM_SYM    ,   XXXXXXX    ,   XXXXXXX
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
-  ),
+  ), 
   [_COLEMAKDH_OVERLAY] = LAYOUT(
   //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
          KC_GRV    ,     KC_Q     ,     KC_W     ,     KC_F     ,     KC_P     ,     KC_B     ,        KC_J     ,     KC_L     ,     KC_U     ,     KC_Y     ,   KC_DQUO    ,   KC_UNDS    ,
