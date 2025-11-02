@@ -599,7 +599,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_QUOT:
         case KC_TILD:
             if(state.hid.active_layout == LAYOUT_INTERNATIONAL && !record->event.pressed){
-                wait_ms(60);
+                wait_ms(40);
                 tap_code(KC_SPC);
                 break;
             }
@@ -607,6 +607,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     return true;
 }
+
+
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
