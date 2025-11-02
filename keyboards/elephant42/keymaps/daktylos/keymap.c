@@ -18,6 +18,7 @@ enum layer_names {
     MED,
     BLOCK_LEFT,
     BLOCK_RIGHT,
+    BLOCK_RIGHT_INTL,
     _JOYSTICK,
     _MENU,
     NUMBER_OF_LAYERS,
@@ -57,8 +58,8 @@ enum layer_names {
 #define LM_NUM LM(NUM,MOD_RALT)
 #define LM_SYM LM(SYM,MOD_RALT)
 
-#define MOD_MASK_RIGHT (0xF0)
-#define MOD_MASK_LEFT (0x0F)
+int MOD_MASK_RIGHT = (0xF0);
+int MOD_MASK_LEFT = (0x0F);
 
 enum custom_keycodes {
     MY_MENU = SAFE_RANGE,
@@ -258,6 +259,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                       _______    ,   _______    ,   _______    ,   _______    ,      _______    ,   _______    ,   _______    ,   _______
   //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
   ),
+  [BLOCK_RIGHT_INTL] = LAYOUT(
+  //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
+        _______    ,   _______    ,   _______    ,   _______    ,   _______    ,   _______    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
+  //|--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------|
+        _______    ,   _______    ,   _______    ,   _______    ,   _______    ,   _______    ,     MO(ACCENT)  ,   KC_RSFT    ,   KC_RCTL    ,   KC_LALT    ,   KC_RGUI    ,   XXXXXXX    ,
+  //`--------------+--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------+--------------'
+                       _______    ,   _______    ,   _______    ,   _______    ,   _______    ,      XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,   XXXXXXX    ,
+  //               `--------------+--------------+--------------+--------------+--------------|  |--------------+--------------+--------------+--------------+--------------`
+                                      _______    ,   _______    ,   _______    ,   _______    ,      _______    ,   _______    ,   _______    ,   _______
+  //                              `--------------+--------------+--------------+--------------'  `--------------+--------------+--------------+--------------'
+  ),
   [_JOYSTICK] = LAYOUT(
   //,--------------+--------------+--------------+--------------+--------------+--------------.  .--------------+--------------+--------------+--------------+--------------+--------------.
           JS_13    ,     JS_2     ,   XXXXXXX    ,   XXXXXXX    ,     JS_11    ,    XXXXXXX   ,       XXXXXXX   ,     JS_27    ,   XXXXXXX    ,   XXXXXXX    ,     JS_18    ,     JS_29    ,
@@ -400,9 +412,11 @@ void eeconfig_init_user() {
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (get_mods() & MOD_MASK_RIGHT) {
-        layer_on(BLOCK_RIGHT);
+        if (state.hid.active_layout == LAYOUT_INTERNATIONAL) layer_on(BLOCK_RIGHT_INTL);
+        else layer_on(BLOCK_RIGHT);
     } else {
-        layer_off(BLOCK_RIGHT);
+        if (state.hid.active_layout == LAYOUT_INTERNATIONAL) layer_off(BLOCK_RIGHT_INTL);
+        else layer_off(BLOCK_RIGHT);
     }
 
     if (get_mods() & MOD_MASK_LEFT) {
@@ -410,9 +424,10 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     } else {
         layer_off(BLOCK_LEFT);
     }
-
     return true;
 }
+
+
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (get_mods() & ~MOD_MASK_SHIFT) {
         if (default_layer_state & (1 << _FARSI)) {
@@ -579,12 +594,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             break;
+        case KC_GRV:
+        case KC_DQUO:
         case KC_QUOT:
         case KC_TILD:
-        case KC_DQUO:
-        case KC_GRAVE:
-            if(state.hid.active_layout == LAYOUT_INTERNATIONAL){
-                tap_code(keycode);
+            if(state.hid.active_layout == LAYOUT_INTERNATIONAL && !record->event.pressed){
+                wait_ms(60);
+                tap_code(KC_SPC);
+                break;
             }
             return true;
     }
@@ -760,18 +777,26 @@ void housekeeping_task_user(void) {
             {
             case LAYOUT_ENGLISH:
                 set_single_default_layer(_COLEMAKDH);
+                MOD_MASK_RIGHT = (0xF0);
+                MOD_MASK_LEFT = (0x0F);
                 break;
             case LAYOUT_FARSI_NON_STANDARD:
                 is_persian_p_override_enabled = true;
+                MOD_MASK_RIGHT = (0xF0);
+                MOD_MASK_LEFT = (0x0F);
                 set_single_default_layer(_FARSI);
                 break;
             case LAYOUT_FARSI:
                 is_persian_p_override_enabled = false;
+                MOD_MASK_RIGHT = (0xF0);
+                MOD_MASK_LEFT = (0x0F);
                 set_single_default_layer(_FARSI);
                 break;
             case LAYOUT_INTERNATIONAL:
             case LAYOUT_INTERNATIONAL_WITHOUT_DEAD_KEYS:
                 set_single_default_layer(_COLEMAKDH_INTL);
+                MOD_MASK_RIGHT = MOD_RSFT & MOD_RCTL & MOD_RGUI;
+                MOD_MASK_LEFT  = MOD_LSFT & MOD_LCTL & MOD_LGUI;
                 break;
             default:
                 break;
