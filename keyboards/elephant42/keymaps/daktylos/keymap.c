@@ -280,17 +280,19 @@ const key_override_t override_shift_dot_is_right_parenthesis  = ko_make_basic(MO
 const key_override_t override_persian_shift_kaf_is_gaf        = ko_make_with_layers(MOD_MASK_SHIFT, KC_SCLN, KC_QUOT, 1 << _FARSI);
 const key_override_t override_persian_shift_khe_is_jim        = ko_make_with_layers(MOD_MASK_SHIFT, KC_O, KC_LBRC, 1 << _FARSI);
 const key_override_t override_persian_shift_he_is_che         = ko_make_with_layers(MOD_MASK_SHIFT, KC_P, KC_RBRC, 1 << _FARSI);
+bool is_persian_p_override_enabled = false;
+
 const key_override_t override_persian_p_in_non_standard_keyboard = {
-    .trigger_mods           = NULL,
-    .layers                 = _FARSI,
-    .suppressed_mods        = NULL,
-    .options                = ko_option_defaults,
-    .negative_mod_mask      = (uint8_t) ~(MOD_BIT(KC_RGUI) | MOD_BIT(KC_RALT)),
-    .custom_action          = momentary_layer,
-    .context                = (void *)LAYER_FN,
+    .trigger_mods           = 0,
+    .layers                 = 1 << _FARSI,
+    .suppressed_mods        = 0,
+    .options                = ko_options_default,
+    .negative_mod_mask      = 0,
+    .custom_action          = NULL,
+    .context                = NULL,
     .trigger                = KC_M,
-    .replacement            = KC_SLSH,
-    .enabled                = true
+    .replacement            = KC_BSLS,
+    .enabled                = &is_persian_p_override_enabled
 };
 
 // This globally defines all key overrides to be used
@@ -577,6 +579,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             break;
+        case KC_QUOT:
+        case KC_TILD:
+        case KC_DQUO:
+        case KC_GRAVE:
+            if(state.hid.active_layout == LAYOUT_INTERNATIONAL){
+                tap_code(keycode);
+            }
+            return true;
     }
     return true;
 }
@@ -751,8 +761,12 @@ void housekeeping_task_user(void) {
             case LAYOUT_ENGLISH:
                 set_single_default_layer(_COLEMAKDH);
                 break;
-            case LAYOUT_FARSI:
             case LAYOUT_FARSI_NON_STANDARD:
+                is_persian_p_override_enabled = true;
+                set_single_default_layer(_FARSI);
+                break;
+            case LAYOUT_FARSI:
+                is_persian_p_override_enabled = false;
                 set_single_default_layer(_FARSI);
                 break;
             case LAYOUT_INTERNATIONAL:
