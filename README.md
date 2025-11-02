@@ -18,6 +18,14 @@
   - 🐧 Linux (Both X11 and Wayland!)
   - 🍎 macOS
 
+### 🔧 Technical Details
+- 🏗️ Custom-built HID communication protocol
+- 🔐 Cross-Platform Native USB HID interface implementation using `hidapi`
+- 🛠️ Custom event handling system supporting X11, Wayland, and Win32 APIs
+- 📦 CMake-based modular build system with cross-platform support
+- 🔄 Automated CI/CD pipeline with GitHub Actions packaging the app for Windows, Linux and MacOS
+
+
 <!-- ## 💝 Features
 TODO
 
