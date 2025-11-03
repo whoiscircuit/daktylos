@@ -1,4 +1,3 @@
-#include "action_tapping.h"
 #include QMK_KEYBOARD_H
 #include "keymap.h"
 #include "raw_hid.h"
