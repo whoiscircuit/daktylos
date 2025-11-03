@@ -1,3 +1,5 @@
+SRC += main.c key_overrides.c hid.c eeprom_config.c oled.c
+
 CAPS_WORD_ENABLE = yes
 KEY_OVERRIDE_ENABLE = yes
 MOUSEKEY_ENABLE = yes
