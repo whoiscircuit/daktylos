@@ -38,7 +38,7 @@ if(UNIX AND NOT APPLE)
         ${XKBFILE_LIB}
         ${XKBCOMMON_LIBRARIES}
     )
-    target_include_directories(${PROJECT_NAME} PRIVATE 
+    target_include_directories(${PROJECT_NAME} PRIVATE
         ${X11_INCLUDE_DIR}
         ${XKBCOMMON_INCLUDE_DIRS}
         ${WAYLAND_CLIENT_INCLUDE_DIRS}
