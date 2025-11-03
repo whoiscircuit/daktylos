@@ -1,5 +1,3 @@
-#include "action_layer.h"
-#include "quantum.h"
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
 #include "transactions.h"
@@ -7,19 +5,19 @@
 enum layer_names {
     _COLEMAKDH,
     _FARSI,
-    _COLEMAKDH_INTL,
-    ACCENT,
-    _COLEMAKDH_OVERLAY,
+    _COLEMAKDH_INTL, // for when the Us (International) layout is being used on the host
+    ACCENT, // for typing accent letters and international symbols
+    _COLEMAKDH_OVERLAY, // for when the keyboard is farsi and a mod key is pressed down
     NUM,
     FUN,
     SYM,
     NAV,
     MOS,
     MED,
-    BLOCK_LEFT,
-    BLOCK_RIGHT,
+    BLOCK_LEFT, // for when a mod key from the left hand is pressed
+    BLOCK_RIGHT, // for when a mod key from the right hand is pressed
     BLOCK_RIGHT_INTL,
-    _JOYSTICK,
+    _JOYSTICK, // joystick mode
     _MENU,
     NUMBER_OF_LAYERS,
 };
@@ -58,8 +56,12 @@ enum layer_names {
 #define LM_NUM LM(NUM,MOD_RALT)
 #define LM_SYM LM(SYM,MOD_RALT)
 
-int MOD_MASK_RIGHT = (0xF0);
-int MOD_MASK_LEFT = (0x0F);
+// accented characters
+#define KC_A_UMLAUT RALT(KC_Q)
+#define KC_O_UMLAUT RALT(KC_P)
+#define KC_U_UMLAUT RALT(KC_Y)
+#define KC_SS RALT(KC_S)
+#define KC_COPYRIGHT RALT(KC_R)
 
 enum custom_keycodes {
     MY_MENU = SAFE_RANGE,
@@ -73,15 +75,6 @@ enum custom_keycodes {
 #define GET_MOD_FROM_TAP_HOLD(tap_hold_keycode) (((tap_hold_keycode) & 0x0F00) >> 8)
 #define GET_LAYER_FROM_TAP_HOLD(tap_hold_keycode) (((tap_hold_keycode) & 0x0F00) >> 8)
 #define GET_KEYCODE_FROM_TAP_HOLD(tap_hold_keycode) ((tap_hold_keycode) & 0xFF)
-
-
-
-// accented characters
-#define KC_A_UMLAUT RALT(KC_Q)
-#define KC_O_UMLAUT RALT(KC_P)
-#define KC_U_UMLAUT RALT(KC_Y)
-#define KC_SS RALT(KC_S)
-#define KC_COPYRIGHT RALT(KC_R)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -380,12 +373,17 @@ typedef union {
 
 user_config_t user_config;
 
+int MOD_MASK_RIGHT = (0xF0);
+int MOD_MASK_LEFT = (0x0F);
+
+// receive hid report from hidrosis from the host 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     state.hid.raw = *(uint16_t *)data;
 }
 
 void setup_config(void) {
     g_tapping_term = user_config.tap_term;
+    // send the user config to the slave side so that the eeprom is synced on both sides
     if (is_keyboard_master()) transaction_rpc_send(USER_CONFIG_SYNC, sizeof(user_config.raw), &user_config.raw);
 }
 
@@ -402,7 +400,9 @@ void state_sync_slave_handler(uint8_t in_buflen, const void *sync_data, uint8_t 
 void keyboard_post_init_user() {
     user_config.raw = eeconfig_read_user();
     setup_config();
+    // for sending presistent setting to the other side
     transaction_register_rpc(USER_CONFIG_SYNC, user_config_sync_slave_handler);
+    // for sending the non-presistent current state of oled, hid, etc..
     transaction_register_rpc(STATE_SYNC, state_sync_slave_handler);
 }
 
@@ -411,6 +411,8 @@ void eeconfig_init_user() {
 }
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    // when a mod from the one side is pressed block the keys on that side to prevent accidental keypresses.
+    // when a mod from the one side is released unblock the keys on that side.
     if (get_mods() & MOD_MASK_RIGHT) {
         if (state.hid.active_layout == LAYOUT_INTERNATIONAL) layer_on(BLOCK_RIGHT_INTL);
         else layer_on(BLOCK_RIGHT);
@@ -429,6 +431,8 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    // if the farsi layout is active and any mod key other than shift is pressed temporarily switch to the colemak-dh overlay
+    // this is done to make keyboard shotcuts such as Ctrl+s persistent on both layouts
     if (get_mods() & ~MOD_MASK_SHIFT) {
         if (default_layer_state & (1 << _FARSI)) {
             layer_on(_COLEMAKDH_OVERLAY);
@@ -443,6 +447,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT_NUM_ENT:
         case LT_SYM_BSPC:
         case LT_FUN_DEL:
+            // when a mod key from the right side is pressed the thumb keys should only act as temporarily layer switchers
+            // this is done to prevent accidental thumb key registers
             if (get_mods() & MOD_MASK_RIGHT) {
                 if (record->event.pressed) {
                     layer_on(GET_LAYER_FROM_TAP_HOLD(keycode));
@@ -453,6 +459,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case LT_NAV_SPC:
+            // if hidrosis integration is not active we have to manually toggle between english and farsi layout when Win+Space is pressed
+            // this is so that the keyboard maintains functionality even if hidrosis is not installed on the host machine
             if (!record->event.pressed && state.hid.os_type == OS_UNKNOWN && get_mods() & MOD_BIT(KC_RGUI)) {
                 if (state.hid.active_layout == LAYOUT_ENGLISH) {
                     state.hid.active_layout = LAYOUT_FARSI;
@@ -462,6 +470,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
         case LT_MOS_TAB:
         case LT_MED_ESC:
+            // when a mod key from the left side is pressed the thumb keys should only act as temporarily layer switchers
+            // this is done to prevent accidental thumb key registers
             if (get_mods() & MOD_MASK_LEFT) {
                 if (record->event.pressed) {
                     layer_on(GET_LAYER_FROM_TAP_HOLD(keycode));
@@ -473,12 +483,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case MT_LSFT_T:
         case MT_LSFT_F:
+            // this is done to keep BOTH_SHIFTS_TURNS_ON_CAPS_WORD working. otherwise it would fail because of the code below
             if (get_mods() & MOD_BIT(KC_RSFT)) break;
         case MT_LCTL_S:
         case MT_LALT_R:
         case MT_LGUI_A:
         case MT_LCTL_D:
         case MT_LALT_S:
+            // when a mod key from the right side is pressed the mod functionality of the home row mods on the left side should be disabled
+            // so that they act as normal keys no matter if they are tapped or held. this is done to prevent accidental keypresses.
             if (record->event.pressed) {
                 if (get_mods() & MOD_MASK_RIGHT) {
                     register_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
@@ -492,6 +505,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case MT_RSFT_N:
         case MT_RSFT_J:
+            // this is done to keep BOTH_SHIFTS_TURNS_ON_CAPS_WORD working. otherwise it would fail because of the code below
             if (get_mods() & MOD_BIT(KC_LSFT)) break;
         case MT_RCTL_E:
         case MT_RALT_I:
@@ -500,6 +514,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case MT_RALT_L:
         case MT_LALT_I:
         case MT_RGUI_SCLN:
+            // when a mod key from the left side is pressed the mod functionality of the home row mods on the right side should be disabled
+            // so that they act as normal keys no matter if they are tapped or held. this is done to prevent accidental keypresses.
             if (record->event.pressed) {
                 if (get_mods() & MOD_MASK_LEFT) {
                     register_code(GET_KEYCODE_FROM_TAP_HOLD(keycode));
@@ -511,36 +527,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case MY_MENU:
+            // the menu button is a custom button that will toggle the menu GUI in the OLED display.
+            // by enabling the oled state for menu and switching the active layout to _MENU
             if (!record->event.pressed) {
-                switch (state.oled.mode) {
-                    case OLED_MENU:
-                        switch (state.hid.active_layout) {
-                            case LAYOUT_ENGLISH:
-                                set_single_default_layer(_COLEMAKDH);
-                                break;
-                            case LAYOUT_FARSI:
-                                set_single_default_layer(_FARSI);
-                                break;
-                            case LAYOUT_INTERNATIONAL:
-                                set_single_default_layer(_COLEMAKDH_INTL);
-                                break;
-                        }
-                        state.oled.mode = OLED_OFF;
-                        break;
-                    case OLED_PREFS:
-                        set_single_default_layer(_MENU);
-                        state.oled.prefs_index = 0;
-                        state.oled.mode        = OLED_MENU;
-                        break;
-                    default:
-                        set_single_default_layer(_MENU);
-                        state.oled.menu_index = 0;
-                        state.oled.mode       = OLED_MENU;
-                        break;
+                if(state.oled.mode == OLED_MENU){
+                    switch (state.hid.active_layout) {
+                        case LAYOUT_ENGLISH:
+                            set_single_default_layer(_COLEMAKDH);
+                            break;
+                        case LAYOUT_FARSI:
+                        case LAYOUT_FARSI_NON_STANDARD:
+                            set_single_default_layer(_FARSI);
+                            break;
+                        case LAYOUT_INTERNATIONAL:
+                        case LAYOUT_INTERNATIONAL_WITHOUT_DEAD_KEYS:
+                            set_single_default_layer(_COLEMAKDH_INTL);
+                            break;
+                    }
+                    state.oled.mode = OLED_OFF;
+                }
+                else{
+                    set_single_default_layer(_MENU);
+                    state.oled.prefs_index = 0;
+                    state.oled.mode        = OLED_MENU;
                 }
             }
             break;
         case MY_DOWN:
+            // navigate down in menu display of the keyboard
             if (!record->event.pressed) {
                 if (state.oled.mode == OLED_MENU) {
                     state.oled.menu_index = (state.oled.menu_index + 1) % NUMBER_OF_MENU_ITEMS;
@@ -550,6 +564,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case MY_UP:
+          // navigate up in menu display of the keyboard
             if (!record->event.pressed) {
                 if (state.oled.mode == OLED_MENU) {
                     if (state.oled.menu_index == 0)
@@ -565,6 +580,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case MY_LEFT:
+          // navigate left in menu display of the keyboard
             if (record->event.pressed || state.oled.mode != OLED_PREFS) return false;
             if (state.oled.prefs_index == PREFS_TAP_TERM) {
                 user_config.tap_term = (user_config.tap_term / 5 * 5) - 5;
@@ -574,12 +590,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             setup_config();
             break;
         case MY_RIGHT:
+        // navigate right in menu display of the keyboard
             if (record->event.pressed || state.oled.mode != OLED_PREFS) return false;
             user_config.tap_term = (user_config.tap_term / 5 * 5) + 5;
             eeconfig_update_user(user_config.raw);
             setup_config();
             break;
         case MY_SELECT:
+          // select an item in the menu display of the keyboard
             if (!record->event.pressed) {
                 switch (state.oled.menu_index) {
                     case MENU_JOYSTICK:
@@ -598,6 +616,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_DQUO:
         case KC_QUOT:
         case KC_TILD:
+            // disable dead keys (not ideal. the implementation of dead keys in windows is not good!)
             if(state.hid.active_layout == LAYOUT_INTERNATIONAL && !record->event.pressed){
                 wait_ms(40);
                 tap_code(KC_SPC);
@@ -649,18 +668,6 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
             return g_tapping_term;
     }
 }
-
-#ifndef MAGIC_ENABLE
-uint16_t keycode_config(uint16_t keycode) {
-    return keycode;
-}
-#endif
-
-#ifndef MAGIC_ENABLE
-uint8_t mod_config(uint8_t mod) {
-    return mod;
-}
-#endif
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_270; // flips the display 180 degrees if offhand
@@ -806,3 +813,16 @@ void housekeeping_task_user(void) {
         }
     }
 }
+
+// QMK optimizations
+#ifndef MAGIC_ENABLE
+uint16_t keycode_config(uint16_t keycode) {
+    return keycode;
+}
+#endif
+
+#ifndef MAGIC_ENABLE
+uint8_t mod_config(uint8_t mod) {
+    return mod;
+}
+#endif
