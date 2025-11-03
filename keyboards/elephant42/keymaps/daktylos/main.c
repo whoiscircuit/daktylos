@@ -1,3 +1,4 @@
+#include "action_tapping.h"
 #include QMK_KEYBOARD_H
 #include "keymap.h"
 #include "raw_hid.h"
@@ -20,7 +21,7 @@ void state_sync_slave_handler(uint8_t in_buflen, const void *sync_data, uint8_t 
 }
 
 void keyboard_post_init_user() {
-    user_config.raw = eeconfig_read_user();
+    eeprom.raw = eeconfig_read_user();
     setup_config();
     // for sending presistent setting to the other side
     transaction_register_rpc(USER_CONFIG_SYNC, user_config_sync_slave_handler);
@@ -199,17 +200,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             // navigate left in menu display of the keyboard
             if (record->event.pressed || oled_state.mode != OLED_PREFS) return false;
             if (oled_state.prefs_index == PREF_TAP_TERM) {
-                user_config.tap_term = (user_config.tap_term / 5 * 5) - 5;
+                eeprom.tap_term = (eeprom.tap_term / 5 * 5) - 5;
             }
 
-            eeconfig_update_user(user_config.raw);
+            eeconfig_update_user(eeprom.raw);
             setup_config();
             break;
         case MY_RIGHT:
             // navigate right in menu display of the keyboard
             if (record->event.pressed || oled_state.mode != OLED_PREFS) return false;
-            user_config.tap_term = (user_config.tap_term / 5 * 5) + 5;
-            eeconfig_update_user(user_config.raw);
+            eeprom.tap_term = (eeprom.tap_term / 5 * 5) + 5;
+            eeconfig_update_user(eeprom.raw);
             setup_config();
             break;
         case MY_SELECT:
@@ -254,16 +255,22 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case MT_RGUI_O:
         case MT_RGUI_SCLN:
             return g_tapping_term * 1.5;
+        case MT_LALT_I:
+        case MT_LALT_R:
+        case MT_LALT_S:
+        case MT_RALT_L:
+        case MT_RALT_I:
+            return g_tapping_term * 1.25;
         case MT_RCTL_E:
         case MT_LCTL_S:
         case MT_RCTL_K:
         case MT_LCTL_D:
-            return g_tapping_term * 0.8;
+            return g_tapping_term * 1;
         case MT_RSFT_N:
         case MT_LSFT_T:
         case MT_RSFT_J:
         case MT_LSFT_F:
-            return g_tapping_term * 0.7;
+            return g_tapping_term * 0.75;
         default:
             return g_tapping_term;
     }
@@ -271,18 +278,26 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case MT_RCTL_E:
-        case MT_LCTL_S:
         case MT_RSFT_N:
         case MT_LSFT_T:
-        case MT_RCTL_K:
-        case MT_LCTL_D:
         case MT_RSFT_J:
         case MT_LSFT_F:
+        case MT_RCTL_E:
+        case MT_LCTL_S:
+        case MT_RCTL_K:
+        case MT_LCTL_D:
+        case MT_LALT_R:
+        case MT_LALT_I:
+        case MT_LALT_S:
+        case MT_RALT_I:
+        case MT_RALT_L:
+        case MT_RGUI_O:
+        case MT_LGUI_A:
+        case MT_RGUI_SCLN:
             return 0;
         case LT_NAV_SPC:
         case LT_SYM_BSPC:
-            return g_tapping_term * 0.5;
+            return g_tapping_term * 0.85;
         default:
             return g_tapping_term;
     }

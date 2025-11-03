@@ -1,4 +1,9 @@
 #include "avr/pgmspace.h"
+
+// the font is optimized by deleting useless characters.
+// you can copy this code into qle (QMK Logo Editor) to modify it
+// https://joric.github.io/qle/
+
 static const unsigned char PROGMEM font[] = {
     0x3E, 0x51, 0x49, 0x45, 0x3E, 0x00,
     0x00, 0x42, 0x7F, 0x40, 0x00, 0x00,

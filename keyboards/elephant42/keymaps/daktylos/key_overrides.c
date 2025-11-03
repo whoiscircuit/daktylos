@@ -13,7 +13,7 @@ static const key_override_t override_persian_shift_he_is_che         = ko_make_w
 
 bool is_persian_p_override_enabled = false;
 
-static const key_override_t override_persian_p_in_non_standard_keyboard = {
+static const key_override_t override_persian_p_in_non_standard_farsi_layout = {
     .trigger_mods           = 0,
     .layers                 = 1 << _FARSI,
     .suppressed_mods        = 0,
@@ -28,5 +28,5 @@ static const key_override_t override_persian_p_in_non_standard_keyboard = {
 
 const key_override_t *key_overrides[] = {
     &override_swap_qoute_and_double_qoute, &override_shift_slash_is_back_slash, &override_swap_minus_and_underscore, &override_shift_dot_is_right_parenthesis, &override_shift_comma_is_left_parenthesis, &override_persian_shift_kaf_is_gaf, &override_persian_shift_he_is_che, &override_persian_shift_khe_is_jim,
-    &override_persian_p_in_non_standard_keyboard
+    &override_persian_p_in_non_standard_farsi_layout
 };

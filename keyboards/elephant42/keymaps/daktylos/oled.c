@@ -80,9 +80,9 @@ bool oled_task_user(void) {
                 oled_write_P(PSTR("\x5F\x1F\x0C\x1B\x5F"), oled_state.prefs_index == PREF_TAP_TERM);
                 oled_write_P(PSTR("\x1F\x10\x1D\x18\x5F"), oled_state.prefs_index == PREF_TAP_TERM);
                 oled_state.prefs_index == PREF_TAP_TERM ? oled_write_P(PSTR("\x2C"), false) : oled_advance_char();
-                user_config.tap_term >= 100 ? oled_write_char((user_config.tap_term / 100), false) : oled_write_char(0, false);
-                user_config.tap_term >= 10 ? oled_write_char((user_config.tap_term / 10) % 10, false) : oled_write_char(0, false);
-                oled_write_char(user_config.tap_term % 10, false);
+                eeprom.tap_term >= 100 ? oled_write_char((eeprom.tap_term / 100), false) : oled_write_char(0, false);
+                eeprom.tap_term >= 10 ? oled_write_char((eeprom.tap_term / 10) % 10, false) : oled_write_char(0, false);
+                oled_write_char(eeprom.tap_term % 10, false);
                 oled_state.prefs_index == PREF_TAP_TERM ? oled_write_P(PSTR("\x2A"), false) : oled_advance_char();
             }
             break;

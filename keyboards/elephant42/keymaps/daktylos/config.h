@@ -22,6 +22,8 @@
 #define MOUSEKEY_MOVE_DELTA 8
 #define MOUSEKEY_MAX_SPEED 10
 #define MK_COMBINED
+
+// these values are recognized by hidrosis
 #define RAW_USAGE_PAGE 0xFF69
 #define RAW_USAGE_ID 0x69
 
