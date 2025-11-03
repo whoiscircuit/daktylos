@@ -23,6 +23,7 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE hidapi::hidapi)
 target_link_libraries(${PROJECT_NAME} PRIVATE cjson)
+target_include_directories(${PROJECT_NAME} PRIVATE ../libs/cjson)
 
 add_compile_definitions(${PROJECT_NAME} PRIVATE _GNU_SOURCE)
 

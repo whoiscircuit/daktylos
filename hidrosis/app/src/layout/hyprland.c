@@ -1,6 +1,6 @@
 #ifdef __linux__
 #include <stdio.h>
-#include "cjson/cJSON.h"
+#include "cJSON.h"
 #include "layout.h"
 #include "log.h"
 #include <string.h>

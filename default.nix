@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
     nativeBuildInputs = [cmake pkgconf clang patchelf];
 
     buildInputs = [
-        libudev-zero libxkbcommon xorg.libX11 xorg.libxkbfile wayland libffi cjson
+        libudev-zero libxkbcommon xorg.libX11 xorg.libxkbfile wayland libffi
     ];
 
     installPhase = ''
