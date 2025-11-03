@@ -329,13 +329,14 @@ void matrix_scan_user(void) {
 
 void housekeeping_task_user(void) {
     if (is_keyboard_master()) {
-        // Interact with slave every 500ms
+        // sync hid and oled state with slave side in an interval
         static uint32_t last_sync = 0;
         if (timer_elapsed32(last_sync) > 200) {
             uint16_t raw = oled_state.raw << 8 & hid_state.raw;
             transaction_rpc_send(STATE_SYNC, sizeof(uint16_t), &raw);
             last_sync = timer_read32();
         }
+        // set the default keyboard layout based on the layout info sent by hidrosis
         if (oled_state.mode == OLED_OFF) {
             switch (hid_state.active_layout) {
                 case LAYOUT_ENGLISH:
