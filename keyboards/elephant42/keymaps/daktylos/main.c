@@ -1,11 +1,11 @@
 #include QMK_KEYBOARD_H
+#include "transactions.h"
 #include "keymap.h"
 #include "raw_hid.h"
 #include "key_overrides.h"
 #include "hid.h"
 #include "oled.h"
 #include "eeprom_config.h"
-#include "transactions.h"
 
 #define GET_MOD_FROM_TAP_HOLD(tap_hold_keycode) (((tap_hold_keycode) & 0x0F00) >> 8)
 #define GET_LAYER_FROM_TAP_HOLD(tap_hold_keycode) (((tap_hold_keycode) & 0x0F00) >> 8)
@@ -15,8 +15,8 @@ int MOD_MASK_RIGHT = (0xF0);
 int MOD_MASK_LEFT  = (0x0F);
 
 void state_sync_slave_handler(uint8_t in_buflen, const void *sync_data, uint8_t out_buflen, void *out_data) {
-    oled_state = *(oled_state_t *)sync_data;
-    hid_state  = *(hid_state_t *)(sync_data + 1);
+    oled_state.raw = *(uint8_t *)sync_data;
+    hid_state.raw  = *((uint8_t*)sync_data + 1);
 }
 
 void keyboard_post_init_user() {
@@ -327,13 +327,15 @@ void matrix_scan_user(void) {
     }
 }
 
+uint8_t _sync_data[2];
 void housekeeping_task_user(void) {
     if (is_keyboard_master()) {
         // sync hid and oled state with slave side in an interval
         static uint32_t last_sync = 0;
         if (timer_elapsed32(last_sync) > 200) {
-            uint16_t raw = oled_state.raw << 8 & hid_state.raw;
-            transaction_rpc_send(STATE_SYNC, sizeof(uint16_t), &raw);
+            _sync_data[0] = oled_state.raw;
+            _sync_data[1] = hid_state.raw;
+            transaction_rpc_send(STATE_SYNC, 2, &_sync_data);
             last_sync = timer_read32();
         }
         // set the default keyboard layout based on the layout info sent by hidrosis
