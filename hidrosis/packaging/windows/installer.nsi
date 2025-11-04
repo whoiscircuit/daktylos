@@ -34,6 +34,7 @@ SectionEnd
 Section "Uninstall"
 
   ; Delete installed files
+  ExecWait 'taskkill /F /IM hidrosis.exe'
   Delete "$INSTDIR\hidrosis.exe"
   Delete "$INSTDIR\hidrosis-stdout.log"
   Delete "$INSTDIR\hidrosis-stderr.log"
