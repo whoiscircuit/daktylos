@@ -1,4 +1,4 @@
-# 🎹✨ Daktylos: The Keyboard Layout Designed for Efficiency! 🚀
+# 🎹 Daktylos: The Keyboard Layout Designed for Efficiency! 🚀
 ![License](https://img.shields.io/github/license/whoiscircuit/daktylos)
 ![Build](https://img.shields.io/github/actions/workflow/status/whoiscircuit/daktylos/build_binaries.yaml)
 ![Stars](https://img.shields.io/github/stars/whoiscircuit/daktylos)
@@ -7,7 +7,7 @@
 
 **Daktylos** is a delightfully crafted [**QMK**](https://qmk.fm) layout for the elegant [**elephant42**](https://github.com/illness072/elephant42) keyboard, inspired by the [**Miryoku Layout**](https://github.com/manna-harbour/miryoku). Daktylos is paired with an optional companion app [**Hidrosis**](./hidrosis) to enable communication between the host and the keyboard.
 
-### ✨ Features That'll Make You Go "Wow!"
+### 🌟 Key Features
 
 - 🌈 **Custom QMK Layout**: featuring home-row mods and multi layer thumb clusters keys
 - 🎮 **Joystick Mode**: Transform your split keyboard into a retro gaming controller - play with friends using each half as a joystick!
