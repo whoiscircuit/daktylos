@@ -27,7 +27,7 @@ jobs:
         - name: Build Hidrosis for Linux
           run: |
             cd hidrosis
-            cmake -S . -B build/ -DCMAKE_POLICY_VERSION_MINIMUM="3.5"
+            cmake -S . -B build/ -DCMAKE_POLICY_VERSION_MINIMUM="3.5" --config Release
             cmake --build build/
         - name: Create the .deb & .rpm packages
           id: build_linux
